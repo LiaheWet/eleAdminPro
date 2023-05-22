@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.eleadmin.common.system.mapper.UserMapper">
+
+    <!-- 性别字典查询sql -->
+    <sql id="selectSexDictSql">
+        SELECT ta.*
+        FROM sys_dictionary_data ta
+                 LEFT JOIN sys_dictionary tb
+                           ON ta.dict_id = tb.dict_id
+                               AND tb.deleted = 0
+        WHERE ta.deleted = 0
+          AND tb.dict_code = 'sex'
+    </sql>
+
+    <!-- 用户角色查询sql -->
+    <sql id="selectUserRoleSql">
+        SELECT a.user_id,
+               GROUP_CONCAT(b.role_name) role_name
+        FROM sys_user_role a
+                 LEFT JOIN sys_role b ON a.role_id = b.role_id
+        GROUP BY a.user_id
+    </sql>
+
+    <!-- 关联查询sql -->
+    <sql id="selectSql">
+        SELECT a.*,
+        b.organization_name,
+        c.dict_data_name sex_name
+        FROM sys_user a
+        LEFT JOIN sys_organization b ON a.organization_id = b.organization_id
+        LEFT JOIN (
+        <include refid="selectSexDictSql"/>
+        ) c ON a.sex = c.dict_data_code
+        LEFT JOIN(
+        <include refid="selectUserRoleSql"/>
+        ) d ON a.user_id = d.user_id
+        <where>
+            <if test="param.userId != null">
+                AND a.user_id = #{param.userId}
+            </if>
+            <if test="param.username != null">
+                AND a.username LIKE CONCAT('%', #{param.username}, '%')
+            </if>
+            <if test="param.nickname != null">
+                AND a.nickname LIKE CONCAT('%', #{param.nickname}, '%')
+            </if>
+            <if test="param.sex != null">
+                AND a.sex = #{param.sex}
+            </if>
+            <if test="param.phone != null">
+                AND a.phone LIKE CONCAT('%', #{param.phone}, '%')
+            </if>
+            <if test="param.email != null">
+                AND a.email LIKE CONCAT('%', #{param.email}, '%')
+            </if>
+            <if test="param.emailVerified != null">
+                AND a.email_verified = #{param.emailVerified}
+            </if>
+            <if test="param.realName != null">
+                AND a.real_name LIKE CONCAT('%', #{param.realName}, '%')
+            </if>
+            <if test="param.idCard != null">
+                AND a.id_card LIKE CONCAT('%', #{param.idCard}, '%')
+            </if>
+            <if test="param.birthday != null">
+                AND a.birthday LIKE CONCAT('%', #{param.birthday}, '%')
+            </if>
+            <if test="param.organizationId != null">
+                AND a.organization_id = #{param.organizationId}
+            </if>
+            <if test="param.status != null">
+                AND a.`status` = #{param.status}
+            </if>
+            <if test="param.createTimeStart != null">
+                AND a.create_time &gt;= #{param.createTimeStart}
+            </if>
+            <if test="param.createTimeEnd != null">
+                AND a.create_time &lt;= #{param.createTimeEnd}
+            </if>
+            <if test="param.deleted != null">
+                AND a.deleted = #{param.deleted}
+            </if>
+            <if test="param.deleted == null">
+                AND a.deleted = 0
+            </if>
+            <if test="param.roleId != null">
+                AND a.user_id IN (SELECT user_id FROM sys_user_role WHERE role_id=#{param.roleId})
+            </if>
+            <if test="param.organizationName != null">
+                AND b.organization_name LIKE CONCAT('%', #{param.organizationName}, '%')
+            </if>
+            <if test="param.sexName != null">
+                AND c.dict_data_name = #{param.sexName}
+            </if>
+            <if test="param.keywords != null">
+                AND (
+                a.username LIKE CONCAT('%', #{param.keywords}, '%')
+                OR a.nickname LIKE CONCAT('%', #{param.keywords}, '%')
+                OR b.organization_name LIKE CONCAT('%', #{param.keywords}, '%')
+                OR c.dict_data_name LIKE CONCAT('%', #{param.keywords}, '%')
+                OR d.role_name LIKE CONCAT('%', #{param.keywords}, '%')
+                )
+            </if>
+        </where>
+    </sql>
+
+    <!-- 分页查询 -->
+    <select id="selectPageRel" resultType="com.eleadmin.common.system.entity.User">
+        <include refid="selectSql"></include>
+    </select>
+
+    <!-- 查询全部 -->
+    <select id="selectListRel" resultType="com.eleadmin.common.system.entity.User">
+        <include refid="selectSql"></include>
+    </select>
+
+    <!-- 根据账号查询 -->
+    <select id="selectByUsername" resultType="com.eleadmin.common.system.entity.User">
+        SELECT a.* ,
+        b.organization_name,
+        c.dict_data_name sex_name
+        FROM sys_user a
+        LEFT JOIN sys_organization b ON a.organization_id = b.organization_id
+        LEFT JOIN (
+        <include refid="selectSexDictSql"/>
+        ) c ON a.sex = c.dict_data_code
+        <where>
+            AND a.deleted = 0
+            AND a.username = #{username}
+            <if test="tenantId != null">
+                AND a.tenant_id = #{tenantId}
+            </if>
+            <if test="tenantId == null">
+                AND a.tenant_id = 1
+            </if>
+        </where>
+    </select>
+
+</mapper>

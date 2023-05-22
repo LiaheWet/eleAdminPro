@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eleadmin.common.system.mapper.DictionaryDataMapper">
+
+    <!-- 关联查询sql -->
+    <sql id="selectSql">
+        SELECT a.*,
+        b.dict_code,
+        b.dict_name
+        FROM sys_dictionary_data a
+        LEFT JOIN sys_dictionary b ON a.dict_id = b.dict_id
+        <where>
+            AND a.deleted = 0
+            <if test="param.dictDataId != null">
+                AND a.dict_data_id = #{param.dictDataId}
+            </if>
+            <if test="param.dictId != null">
+                AND a.dict_id = #{param.dictId}
+            </if>
+            <if test="param.dictDataCode != null">
+                AND a.dict_data_code LIKE CONCAT('%', #{param.dictDataCode}, '%')
+            </if>
+            <if test="param.dictDataName != null">
+                AND a.dict_data_name LIKE CONCAT('%', #{param.dictDataName}, '%')
+            </if>
+            <if test="param.comments != null">
+                AND a.comments LIKE CONCAT('%', #{param.comments}, '%')
+            </if>
+            <if test="param.createTimeStart != null">
+                AND a.create_time &gt;= #{param.createTimeStart}
+            </if>
+            <if test="param.createTimeEnd != null">
+                AND a.create_time &lt;= #{param.createTimeEnd}
+            </if>
+            <if test="param.dictCode != null">
+                AND b.dict_code = #{param.dictCode}
+            </if>
+            <if test="param.dictName != null">
+                AND b.dict_name = #{param.dictName}
+            </if>
+            <if test="param.keywords != null">
+                AND (
+                a.dict_data_code LIKE CONCAT('%', #{param.keywords}, '%')
+                OR a.dict_data_name LIKE CONCAT('%', #{param.keywords}, '%')
+                )
+            </if>
+        </where>
+    </sql>
+
+    <!-- 分页查询 -->
+    <select id="selectPageRel" resultType="com.eleadmin.common.system.entity.DictionaryData">
+        <include refid="selectSql"/>
+    </select>
+
+    <!-- 查询全部 -->
+    <select id="selectListRel" resultType="com.eleadmin.common.system.entity.DictionaryData">
+        <include refid="selectSql"/>
+    </select>
+
+    <!-- 根据dictCode和dictDataName查询 -->
+    <select id="getByDictCodeAndName" resultType="com.eleadmin.common.system.entity.DictionaryData">
+        SELECT a.*,
+               b.dict_code,
+               b.dict_name
+        FROM sys_dictionary_data a
+                 LEFT JOIN sys_dictionary b ON a.dict_id = b.dict_id
+        WHERE a.dict_data_name = #{dictDataName}
+          AND b.dict_code = #{dictCode}
+    </select>
+
+</mapper>

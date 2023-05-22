@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eleadmin.bgm.mapper.BgmMaterialTypeMapper">
+
+    <!-- 关联查询sql -->
+    <sql id="selectSql">
+        SELECT a.*
+        FROM bgm_material_type a
+        <where>
+            <if test="param.materialTypeId != null">
+                AND a.material_type_id = #{param.materialTypeId}
+            </if>
+            <if test="param.materialTypeName != null">
+                AND a.material_type_name LIKE CONCAT('%', #{param.materialTypeName}, '%')
+            </if>
+            <if test="param.materialTypePid != null">
+                AND a.material_type_pid = #{param.materialTypePid}
+            </if>
+        </where>
+    </sql>
+
+    <!-- 分页查询 -->
+    <select id="selectPageRel" resultType="com.eleadmin.bgm.entity.BgmMaterialType">
+        <include refid="selectSql"></include>
+    </select>
+
+    <!-- 查询全部 -->
+    <select id="selectListRel" resultType="com.eleadmin.bgm.entity.BgmMaterialType">
+        <include refid="selectSql"></include>
+    </select>
+    <!-- 查询全部 -->
+    <select id="getAllNodes" resultType="com.eleadmin.bgm.entity.BgmMaterialType">
+        select * from bgm_material_type;
+    </select>
+
+</mapper>

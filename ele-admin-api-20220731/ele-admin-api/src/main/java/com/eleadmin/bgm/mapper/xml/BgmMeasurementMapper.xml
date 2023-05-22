@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eleadmin.bgm.mapper.BgmMeasurementMapper">
+
+    <!-- 关联查询sql -->
+    <sql id="selectSql">
+        SELECT a.*
+        FROM bgm_measurement a
+        <where>
+            <if test="param.measurementId != null">
+                AND a.measurement_id = #{param.measurementId}
+            </if>
+            <if test="param.measurementName != null">
+                AND a.measurement_name LIKE CONCAT('%', #{param.measurementName}, '%')
+            </if>
+            <if test="param.measurementSymbol != null">
+                AND a.measurement_symbol LIKE CONCAT('%', #{param.measurementSymbol}, '%')
+            </if>
+            <if test="param.measurementStatus != null">
+                AND a.measurement_status = #{param.measurementStatus}
+            </if>
+        </where>
+    </sql>
+
+    <!-- 分页查询 -->
+    <select id="selectPageRel" resultType="com.eleadmin.bgm.entity.BgmMeasurement">
+        <include refid="selectSql"></include>
+    </select>
+
+    <!-- 查询全部 -->
+    <select id="selectListRel" resultType="com.eleadmin.bgm.entity.BgmMeasurement">
+        <include refid="selectSql"></include>
+    </select>
+
+</mapper>

@@ -1,0 +1,278 @@
+<%
+var serviceIns = strutil.toLowerCase(strutil.subStringTo(table.serviceName, 0, 1)) + strutil.subString(table.serviceName, 1);
+var authPre = package.ModuleName + ':' + table.entityPath;
+var idFieldName, idPropertyName;
+for(field in table.fields) {
+    if(field.keyFlag) {
+        idFieldName = field.name;
+        idPropertyName = field.propertyName;
+    }
+}
+%>
+package ${package.Controller};
+
+<% if(isNotEmpty(superControllerClassPackage)) { %>
+import ${superControllerClassPackage};
+<% } %>
+import ${cfg.packageName!}.${package.ModuleName}.service.${entity}Service;
+import ${cfg.packageName!}.${package.ModuleName}.entity.${entity};
+import ${cfg.packageName!}.${package.ModuleName}.param.${entity}Param;
+import ${cfg.packageName!}.common.core.web.ApiResult;
+import ${cfg.packageName!}.common.core.web.PageResult;
+import ${cfg.packageName!}.common.core.web.PageParam;
+import ${cfg.packageName!}.common.core.web.BatchParam;
+import ${cfg.packageName!}.common.core.annotation.OperationLog;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+<% if(!restControllerStyle) { %>
+import org.springframework.stereotype.Controller;
+<% } %>
+
+import javax.annotation.Resource;
+import java.util.List;
+
+/**
+ * ${table.comment!}控制器
+ *
+ * @author ${author}
+ * @since ${date(), 'yyyy-MM-dd HH:mm:ss'}
+ */
+<% if(swagger2) { %>
+@Api(tags = "${table.comment!}管理")
+<% } %>
+<% if(restControllerStyle) { %>
+@RestController
+<% } else { %>
+@Controller
+<% } %>
+@RequestMapping("${cfg.controllerMappingPrefix!}<% if(isNotEmpty(package.ModuleName)){ %>/${package.ModuleName}<% } %>/<% if(isNotEmpty(controllerMappingHyphenStyle)){ %>${controllerMappingHyphen}<% }else{ %>${table.entityPath}<% } %>")
+<% if(kotlin) { %>
+class ${table.controllerName}<% if(isNotEmpty(superControllerClass)) { %> : ${superControllerClass}()<% } %>
+<% } else if(isNotEmpty(superControllerClass)) { %>
+public class ${table.controllerName} extends ${superControllerClass} {
+<% } else { %>
+public class ${table.controllerName} {
+<% } %>
+    @Resource
+    private ${table.serviceName} ${serviceIns};
+
+    <% if(!swagger2) { %>
+    /**
+     * 分页查询${table.comment!}
+     */
+    <% } %>
+    <% if(cfg.authAnnotation) { %>
+    @PreAuthorize("hasAuthority('${authPre}:list')")
+    <% } %>
+    <% if(cfg.logAnnotation) { %>
+    @OperationLog
+    <% } %>
+    <% if(swagger2) { %>
+    @ApiOperation("分页查询${table.comment!}")
+    <% } %>
+    <% if(!restControllerStyle) { %>
+    @ResponseBody
+    <% } %>
+    @GetMapping("/page")
+    public ApiResult<PageResult<${entity}>> page(${entity}Param param) {
+        PageParam<${entity}, ${entity}Param> page = new PageParam<>(param);
+        //page.setDefaultOrder("create_time desc");
+        return success(${serviceIns}.page(page, page.getWrapper()));
+        // 使用关联查询
+        //return success(${serviceIns}.pageRel(param));
+    }
+
+    <% if(!swagger2) { %>
+    /**
+     * 查询全部${table.comment!}
+     */
+    <% } %>
+    <% if(cfg.authAnnotation) { %>
+    @PreAuthorize("hasAuthority('${authPre}:list')")
+    <% } %>
+    <% if(cfg.logAnnotation) { %>
+    @OperationLog
+    <% } %>
+    <% if(swagger2) { %>
+    @ApiOperation("查询全部${table.comment!}")
+    <% } %>
+    <% if(!restControllerStyle) { %>
+    @ResponseBody
+    <% } %>
+    @GetMapping()
+    public ApiResult<List<${entity}>> list(${entity}Param param) {
+        PageParam<${entity}, ${entity}Param> page = new PageParam<>(param);
+        //page.setDefaultOrder("create_time desc");
+        return success(${serviceIns}.list(page.getOrderWrapper()));
+        // 使用关联查询
+        //return success(${serviceIns}.listRel(param));
+    }
+
+    <% if(!swagger2) { %>
+    /**
+     * 根据id查询${table.comment!}
+     */
+    <% } %>
+    @PreAuthorize("hasAuthority('${authPre}:list')")
+    @OperationLog
+    @ApiOperation("根据id查询${table.comment!}")
+    @GetMapping("/{id}")
+    public ApiResult<${entity}> get(@PathVariable("id") Integer id) {
+        return success(${serviceIns}.getById(id));
+        // 使用关联查询
+        //return success(${serviceIns}.getByIdRel(id));
+    }
+
+    <% if(!swagger2) { %>
+    /**
+     * 添加${table.comment!}
+     */
+    <% } %>
+    <% if(cfg.authAnnotation) { %>
+    @PreAuthorize("hasAuthority('${authPre}:save')")
+    <% } %>
+    <% if(cfg.logAnnotation) { %>
+    @OperationLog
+    <% } %>
+    <% if(swagger2) { %>
+    @ApiOperation("添加${table.comment!}")
+    <% } %>
+    <% if(!restControllerStyle) { %>
+    @ResponseBody
+    <% } %>
+    @PostMapping()
+    public ApiResult<?> save(@RequestBody ${entity} ${table.entityPath}) {
+        if (${serviceIns}.save(${table.entityPath})) {
+            return success("添加成功");
+        }
+        return fail("添加失败");
+    }
+
+    <% if(!swagger2) { %>
+    /**
+     * 修改${table.comment!}
+     */
+    <% } %>
+    <% if(cfg.authAnnotation) { %>
+    @PreAuthorize("hasAuthority('${authPre}:update')")
+    <% } %>
+    <% if(cfg.logAnnotation) { %>
+    @OperationLog
+    <% } %>
+    <% if(swagger2) { %>
+    @ApiOperation("修改${table.comment!}")
+    <% } %>
+    <% if(!restControllerStyle) { %>
+    @ResponseBody
+    <% } %>
+    @PutMapping()
+    public ApiResult<?> update(@RequestBody ${entity} ${table.entityPath}) {
+        if (${serviceIns}.updateById(${table.entityPath})) {
+            return success("修改成功");
+        }
+        return fail("修改失败");
+    }
+
+    <% if(!swagger2) { %>
+    /**
+     * 删除${table.comment!}
+     */
+    <% } %>
+    <% if(cfg.authAnnotation) { %>
+    @PreAuthorize("hasAuthority('${authPre}:remove')")
+    <% } %>
+    <% if(cfg.logAnnotation) { %>
+    @OperationLog
+    <% } %>
+    <% if(swagger2) { %>
+    @ApiOperation("删除${table.comment!}")
+    <% } %>
+    <% if(!restControllerStyle) { %>
+    @ResponseBody
+    <% } %>
+    @DeleteMapping("/{id}")
+    public ApiResult<?> remove(@PathVariable("id") Integer id) {
+        if (${serviceIns}.removeById(id)) {
+            return success("删除成功");
+        }
+        return fail("删除失败");
+    }
+
+    <% if(!swagger2) { %>
+    /**
+     * 批量添加${table.comment!}
+     */
+    <% } %>
+    <% if(cfg.authAnnotation) { %>
+    @PreAuthorize("hasAuthority('${authPre}:save')")
+    <% } %>
+    <% if(cfg.logAnnotation) { %>
+    @OperationLog
+    <% } %>
+    <% if(swagger2) { %>
+    @ApiOperation("批量添加${table.comment!}")
+    <% } %>
+    <% if(!restControllerStyle) { %>
+    @ResponseBody
+    <% } %>
+    @PostMapping("/batch")
+    public ApiResult<?> saveBatch(@RequestBody List<${entity}> list) {
+        if (${serviceIns}.saveBatch(list)) {
+            return success("添加成功");
+        }
+        return fail("添加失败");
+    }
+
+    <% if(!swagger2) { %>
+    /**
+     * 批量修改${table.comment!}
+     */
+    <% } %>
+    <% if(cfg.authAnnotation) { %>
+    @PreAuthorize("hasAuthority('${authPre}:update')")
+    <% } %>
+    <% if(cfg.logAnnotation) { %>
+    @OperationLog
+    <% } %>
+    <% if(swagger2) { %>
+    @ApiOperation("批量修改${table.comment!}")
+    <% } %>
+    <% if(!restControllerStyle) { %>
+    @ResponseBody
+    <% } %>
+    @PutMapping("/batch")
+    public ApiResult<?> removeBatch(@RequestBody BatchParam<${entity}> batchParam) {
+        if (batchParam.update(${serviceIns}, "${idFieldName!}")) {
+            return success("修改成功");
+        }
+        return fail("修改失败");
+    }
+
+    <% if(!swagger2) { %>
+    /**
+     * 批量删除${table.comment!}
+     */
+    <% } %>
+    <% if(cfg.authAnnotation) { %>
+    @PreAuthorize("hasAuthority('${authPre}:remove')")
+    <% } %>
+    <% if(cfg.logAnnotation) { %>
+    @OperationLog
+    <% } %>
+    <% if(swagger2) { %>
+    @ApiOperation("批量删除${table.comment!}")
+    <% } %>
+    <% if(!restControllerStyle) { %>
+    @ResponseBody
+    <% } %>
+    @DeleteMapping("/batch")
+    public ApiResult<?> removeBatch(@RequestBody List<Integer> ids) {
+        if (${serviceIns}.removeByIds(ids)) {
+            return success("删除成功");
+        }
+        return fail("删除失败");
+    }
+
+}

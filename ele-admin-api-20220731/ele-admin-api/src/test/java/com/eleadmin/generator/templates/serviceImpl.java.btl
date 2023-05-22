@@ -1,0 +1,62 @@
+<%
+var idPropertyName, idCapitalName;
+for(field in table.fields) {
+    if(field.keyFlag) {
+        idPropertyName = field.propertyName;
+        idCapitalName = field.capitalName;
+    }
+}
+%>
+package ${package.ServiceImpl};
+
+import ${superServiceImplClassPackage};
+import ${package.Mapper}.${table.mapperName};
+import ${package.Service}.${table.serviceName};
+import ${package.Entity}.${entity};
+import ${cfg.packageName!}.${package.ModuleName}.param.${entity}Param;
+import ${cfg.packageName!}.common.core.web.PageParam;
+import ${cfg.packageName!}.common.core.web.PageResult;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+/**
+ * ${table.comment!}Service实现
+ *
+ * @author ${author}
+ * @since ${date(), 'yyyy-MM-dd HH:mm:ss'}
+ */
+@Service
+<% if(kotlin){ %>
+open class ${table.serviceImplName} : ${superServiceImplClass}<${table.mapperName}, ${entity}>(), ${table.serviceName} {
+
+}
+<% }else{ %>
+public class ${table.serviceImplName} extends ${superServiceImplClass}<${table.mapperName}, ${entity}> implements ${table.serviceName} {
+
+    @Override
+    public PageResult<${entity}> pageRel(${entity}Param param) {
+        PageParam<${entity}, ${entity}Param> page = new PageParam<>(param);
+        //page.setDefaultOrder("create_time desc");
+        List<${entity}> list = baseMapper.selectPageRel(page, param);
+        return new PageResult<>(list, page.getTotal());
+    }
+
+    @Override
+    public List<${entity}> listRel(${entity}Param param) {
+        List<${entity}> list = baseMapper.selectListRel(param);
+        // 排序
+        PageParam<${entity}, ${entity}Param> page = new PageParam<>();
+        //page.setDefaultOrder("create_time desc");
+        return page.sortRecords(list);
+    }
+
+    @Override
+    public ${entity} getByIdRel(Integer ${idPropertyName!}) {
+        ${entity}Param param = new ${entity}Param();
+        param.set${idCapitalName!}(${idPropertyName!});
+        return param.getOne(baseMapper.selectListRel(param));
+    }
+
+}
+<% } %>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eleadmin.demo.mapper.StudentsMapper">
+
+    <!-- 关联查询sql -->
+    <sql id="selectSql">
+        SELECT a.*
+        FROM students a
+        <where>
+            <if test="param.studentId != null">
+                AND a.student_id = #{param.studentId}
+            </if>
+            <if test="param.studentName != null">
+                AND a.student_name LIKE CONCAT('%', #{param.studentName}, '%')
+            </if>
+            <if test="param.studentNumber != null">
+                AND a.student_number LIKE CONCAT('%', #{param.studentNumber}, '%')
+            </if>
+            <if test="param.major != null">
+                AND a.major LIKE CONCAT('%', #{param.major}, '%')
+            </if>
+            <if test="param.sex != null">
+                AND a.sex LIKE CONCAT('%', #{param.sex}, '%')
+            </if>
+        </where>
+    </sql>
+
+    <!-- 分页查询 -->
+    <select id="selectPageRel" resultType="com.eleadmin.demo.entity.Students">
+        <include refid="selectSql"></include>
+    </select>
+
+    <!-- 查询全部 -->
+    <select id="selectListRel" resultType="com.eleadmin.demo.entity.Students">
+        <include refid="selectSql"></include>
+    </select>
+
+</mapper>

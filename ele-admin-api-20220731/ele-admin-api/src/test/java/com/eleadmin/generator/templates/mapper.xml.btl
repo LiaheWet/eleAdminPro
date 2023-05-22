@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="${package.Mapper}.${table.mapperName}">
+<% if(enableCache) { %>
+
+    <!-- 开启二级缓存 -->
+    <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+<% } %>
+<% if(baseResultMap) { %>
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="${package.Entity}.${entity}">
+    <% /** 生成主键排在第一位 **/ %>
+    <% for(field in table.fields) { %>
+        <% if(field.keyFlag){ %>
+        <id column="${field.name}" property="${field.propertyName}" />
+        <% } %>
+    <% } %>
+    <% /** 生成公共字段 **/ %>
+    <% for(field in table.commonFields) { %>
+        <result column="${field.name}" property="${field.propertyName}" />
+    <% } %>
+    <% /** 生成普通字段 **/ %>
+    <% for(field in table.fields) { %>
+        <% if(!field.keyFlag) { %>
+        <result column="${field.name}" property="${field.propertyName}" />
+        <% } %>
+    <% } %>
+    </resultMap>
+<% } %>
+<% if(baseColumnList) { %>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+    <% for(field in table.commonFields) { %>
+        ${field.columnName},
+    <% } %>
+        ${table.fieldNames}
+    </sql>
+<% } %>
+
+    <!-- 关联查询sql -->
+    <sql id="selectSql">
+        SELECT a.*
+        FROM ${table.name} a
+        <where>
+<% for(field in table.fields) { %>
+    <% if(field.keyFlag) { %>
+        <% /** 主键字段 **/ %>
+            <if test="param.${field.propertyName} != null">
+                AND a.${field.name} = #{param.${field.propertyName}}
+            </if>
+    <% } else if(field.name == logicDeleteFieldName) { %>
+        <% /** 逻辑删除字段 **/ %>
+            <if test="param.deleted != null">
+                AND a.deleted = #{param.deleted}
+            </if>
+            <if test="param.deleted == null">
+                AND a.deleted = 0
+            </if>
+    <% } else if(field.name == 'create_time') { %>
+        <% /** 创建时间字段 **/ %>
+            <if test="param.createTimeStart != null">
+                AND a.create_time &gt;= #{param.createTimeStart}
+            </if>
+            <if test="param.createTimeEnd != null">
+                AND a.create_time &lt;= #{param.createTimeEnd}
+            </if>
+    <% } else if(array.contain(cfg.paramExcludeFields, field.name)) { %>
+        <% /** 排除的字段 **/ %>
+    <% } else if(array.contain(cfg.paramEqType, field.propertyType)) { %>
+        <% /** 使用EQ的字段 **/ %>
+            <if test="param.${field.propertyName} != null">
+                AND a.${field.name} = #{param.${field.propertyName}}
+            </if>
+    <% } else { %>
+        <% /** 其它类型使用LIKE **/ %>
+            <if test="param.${field.propertyName} != null">
+                AND a.${field.name} LIKE CONCAT('%', #{param.${field.propertyName}}, '%')
+            </if>
+    <% } %>
+<% } %>
+        </where>
+    </sql>
+
+    <!-- 分页查询 -->
+    <select id="selectPageRel" resultType="${package.Entity}.${entity}">
+        <include refid="selectSql"></include>
+    </select>
+
+    <!-- 查询全部 -->
+    <select id="selectListRel" resultType="${package.Entity}.${entity}">
+        <include refid="selectSql"></include>
+    </select>
+
+</mapper>

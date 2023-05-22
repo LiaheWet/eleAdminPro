@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eleadmin.bgm.mapper.BgmSupplyMaterialMapper">
+
+    <!-- 关联查询sql -->
+    <sql id="selectSql">
+        SELECT a.*
+        FROM bgm_supply_material a
+        ORDER BY a.sm_type_id ASC
+        <where>
+            <if test="param.supplyMaterialId != null">
+                AND a.supply_material_id = #{param.supplyMaterialId}
+            </if>
+            <if test="param.smTypeId != null">
+                AND a.sm_type_id = #{param.smTypeId}
+            </if>
+            <if test="param.smTypeName != null">
+                AND a.sm_type_name LIKE CONCAT('%', #{param.smTypeName}, '%')
+            </if>
+            <if test="param.smSpecs != null">
+                AND a.sm_specs LIKE CONCAT('%', #{param.smSpecs}, '%')
+            </if>
+            <if test="param.smName != null">
+                AND a.sm_name LIKE CONCAT('%', #{param.smName}, '%')
+            </if>
+            <if test="param.smRemark != null">
+                AND a.sm_remark LIKE CONCAT('%', #{param.smRemark}, '%')
+            </if>
+            <if test="param.smStatus != null">
+                AND a.sm_status = #{param.smStatus}
+            </if>
+        </where>
+    </sql>
+
+    <!-- 分页查询 -->
+    <select id="selectPageRel" resultType="com.eleadmin.bgm.entity.BgmSupplyMaterial">
+        <include refid="selectSql"></include>
+    </select>
+
+    <!-- 查询全部 -->
+    <select id="selectListRel" resultType="com.eleadmin.bgm.entity.BgmSupplyMaterial">
+        <include refid="selectSql"></include>
+    </select>
+    <select id="pageList" resultType="com.eleadmin.bgm.param.BgmSupplyMaterialParam">
+        SELECT  a.*
+        FROM bgm_supply_material a
+        INNER JOIN bgm_material b ON a.sm_type_id = b.material_id
+        <where>
+            <if test="param.smTypeId != null">
+                AND b.material_type_id = #{param.smTypeId}
+            </if>
+            <if test="param.smName != null">
+                AND a.sm_name LIKE CONCAT('%', #{param.smName}, '%')
+            </if>
+            <if test="param.smStatus != null">
+                AND a.sm_status = #{param.smStatus}
+            </if>
+        </where>
+        ORDER BY a.sm_type_id ASC
+    </select>
+
+
+</mapper>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.eleadmin.common.system.mapper.OperationRecordMapper">
+
+    <!-- 关联查询sql -->
+    <sql id="selectSql">
+        SELECT a.*,
+        b.nickname,
+        b.username
+        FROM sys_operation_record a
+        LEFT JOIN sys_user b ON a.user_id = b.user_id
+        <where>
+            <if test="param.id != null">
+                AND a.id = #{param.id}
+            </if>
+            <if test="param.userId != null">
+                AND a.user_id = #{param.userId}
+            </if>
+            <if test="param.module != null">
+                AND a.module LIKE CONCAT('%', #{param.module}, '%')
+            </if>
+            <if test="param.description != null">
+                AND a.description LIKE CONCAT('%', #{param.description}, '%')
+            </if>
+            <if test="param.url != null">
+                AND a.url LIKE CONCAT('%', #{param.url}, '%')
+            </if>
+            <if test="param.requestMethod != null">
+                AND a.request_method = #{param.requestMethod}
+            </if>
+            <if test="param.method != null">
+                AND a.method LIKE CONCAT('%', #{param.method}, '%')
+            </if>
+            <if test="param.description != null">
+                AND a.description LIKE CONCAT('%', #{param.description}, '%')
+            </if>
+            <if test="param.ip != null">
+                AND a.ip LIKE CONCAT('%', #{param.ip}, '%')
+            </if>
+            <if test="param.comments != null">
+                AND a.comments LIKE CONCAT('%', #{param.comments}, '%')
+            </if>
+            <if test="param.status != null">
+                AND a.`status` = #{param.status}
+            </if>
+            <if test="param.createTimeStart != null">
+                AND a.create_time &gt;= #{param.createTimeStart}
+            </if>
+            <if test="param.createTimeEnd != null">
+                AND a.create_time &lt;= #{param.createTimeEnd}
+            </if>
+            <if test="param.username != null">
+                AND b.username LIKE CONCAT('%', #{param.username}, '%')
+            </if>
+            <if test="param.nickname != null">
+                AND b.nickname LIKE CONCAT('%', #{param.nickname}, '%')
+            </if>
+        </where>
+    </sql>
+
+    <!-- 分页查询 -->
+    <select id="selectPageRel" resultType="com.eleadmin.common.system.entity.OperationRecord">
+        <include refid="selectSql"></include>
+    </select>
+
+    <!-- 查询全部 -->
+    <select id="selectListRel" resultType="com.eleadmin.common.system.entity.OperationRecord">
+        <include refid="selectSql"></include>
+    </select>
+
+</mapper>

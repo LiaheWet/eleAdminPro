@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eleadmin.bgm.mapper.BgmAgreementMaterialMapper">
+
+    <!-- 关联查询sql -->
+    <sql id="selectSql">
+        SELECT a.*
+        FROM bgm_agreement_material a
+        <where>
+            <if test="param.amId != null">
+                AND a.am_id = #{param.amId}
+            </if>
+            <if test="param.amNumber != null">
+                AND a.am_number LIKE CONCAT('%', #{param.amNumber}, '%')
+            </if>
+            <if test="param.createTimeStart != null">
+                AND a.create_time &gt;= #{param.createTimeStart}
+            </if>
+            <if test="param.createTimeEnd != null">
+                AND a.create_time &lt;= #{param.createTimeEnd}
+            </if>
+            <if test="param.supplyName != null">
+                AND a.supply_name LIKE CONCAT('%', #{param.supplyName}, '%')
+            </if>
+            <if test="param.materialName != null">
+                AND a.material_name LIKE CONCAT('%', #{param.materialName}, '%')
+            </if>
+            <if test="param.measurement != null">
+                AND a.measurement LIKE CONCAT('%', #{param.measurement}, '%')
+            </if>
+            <if test="param.number != null">
+                AND a.number = #{param.number}
+            </if>
+            <if test="param.price != null">
+                AND a.price = #{param.price}
+            </if>
+            <if test="param.totalPrice != null">
+                AND a.total_price = #{param.totalPrice}
+            </if>
+        </where>
+    </sql>
+
+    <!-- 分页查询 -->
+    <select id="selectPageRel" resultType="com.eleadmin.bgm.entity.BgmAgreementMaterial">
+        <include refid="selectSql"></include>
+    </select>
+
+    <!-- 查询全部 -->
+    <select id="selectListRel" resultType="com.eleadmin.bgm.entity.BgmAgreementMaterial">
+        <include refid="selectSql"></include>
+    </select>
+    <!-- 删除所有 -->
+    <delete id="removeAll" parameterType="java.lang.String">
+        DELETE FROM bgm_agreement_material WHERE am_number = #{agreementNumber}
+    </delete>
+
+</mapper>

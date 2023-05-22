@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding" defaultCharsetForPropertiesFiles="GBK">
+    <file url="file://$PROJECT_DIR$/ele-admin-api-20220731/ele-admin-api/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ele-admin-api-20220731/ele-admin-api/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ele-admin-pro-js-20220902/ele-admin-pro-js/src/api/bgm/bgminfo" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ele-admin-pro-js-20220902/ele-admin-pro-js/src/views/bgm/bgminfo" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ele-admin-pro-js-20220902/ele-admin-pro-js/src/views/bgm/bgminfo/measurement" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ele-admin-pro-js-20220902/ele-admin-pro-js/src/views/demo/students/components" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ele-admin-pro-js-20220902/ele-admin-pro-js/src/views/demo/students/components/sex-select.vue" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/ele-admin-pro-js-20220902/ele-admin-pro-js/src/views/demo/students/components/student-auth.vue" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/ele-admin-pro-js-20220902/ele-admin-pro-js/src/views/demo/students/components/student-edit.vue" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/ele-admin-pro-js-20220902/ele-admin-pro-js/src/views/demo/students/components/student-search.vue" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/ele-admin-pro-js-20220902/ele-admin-pro-js/src/views/demo/students/index.vue" charset="UTF-8" />
+    <file url="PROJECT" charset="GBK" />
+  </component>
+</project>

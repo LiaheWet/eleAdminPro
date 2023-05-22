@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eleadmin.bgm.mapper.BgmMaterialMapper">
+
+    <!-- 关联查询sql -->
+    <sql id="selectSql">
+        SELECT a.*
+        FROM bgm_material a
+        <where>
+            <if test="param.materialId != null">
+                AND a.material_id = #{param.materialId}
+            </if>
+            <if test="param.materialTypeId != null">
+                AND a.material_type_id = #{param.materialTypeId}
+            </if>
+            <if test="param.materialName != null">
+                AND a.material_name LIKE CONCAT('%', #{param.materialName}, '%')
+            </if>
+            <if test="param.materialType != null">
+                AND a.material_type LIKE CONCAT('%', #{param.materialType}, '%')
+            </if>
+            <if test="param.materialSpecs != null">
+                AND a.material_specs LIKE CONCAT('%', #{param.materialSpecs}, '%')
+            </if>
+            <if test="param.materialMeasurement != null">
+                AND a.material_measurement LIKE CONCAT('%', #{param.materialMeasurement}, '%')
+            </if>
+            <if test="param.materialStatus != null">
+                AND a.material_status = #{param.materialStatus}
+            </if>
+            <if test="param.materialRemark != null">
+                AND a.material_remark LIKE CONCAT('%', #{param.materialRemark}, '%')
+            </if>
+        </where>
+    </sql>
+
+    <!-- 分页查询 -->
+    <select id="selectPageRel" resultType="com.eleadmin.bgm.entity.BgmMaterial">
+        <include refid="selectSql"></include>
+    </select>
+
+    <!-- 查询全部 -->
+    <select id="selectListRel" resultType="com.eleadmin.bgm.entity.BgmMaterial">
+        <include refid="selectSql"></include>
+    </select>
+
+</mapper>

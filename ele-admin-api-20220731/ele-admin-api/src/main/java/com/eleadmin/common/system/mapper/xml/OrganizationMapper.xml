@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eleadmin.common.system.mapper.OrganizationMapper">
+
+    <!-- 机构类型字典查询sql -->
+    <sql id="selectOrgTypeDictSql">
+        SELECT ta.*
+        FROM sys_dictionary_data ta
+                 LEFT JOIN sys_dictionary tb
+                           ON ta.dict_id = tb.dict_id
+                               AND tb.deleted = 0
+        WHERE ta.deleted = 0
+          AND tb.dict_code = 'organization_type'
+    </sql>
+
+    <!-- 关联查询sql -->
+    <sql id="selectSql">
+        SELECT a.*,
+        b.dict_data_name organization_type_name,
+        c.nickname leader_nickname,
+        c.username leader_username
+        FROM sys_organization a
+        LEFT JOIN (
+        <include refid="selectOrgTypeDictSql"/>
+        ) b ON a.organization_type = b.dict_data_code
+        LEFT JOIN sys_user c ON a.leader_id = c.user_id
+        <where>
+            AND a.deleted = 0
+            <if test="param.organizationId != null">
+                AND a.organization_id = #{param.organizationId}
+            </if>
+            <if test="param.parentId != null">
+                AND a.parent_id = #{param.parentId}
+            </if>
+            <if test="param.organizationName != null">
+                AND a.organization_name LIKE CONCAT('%', #{param.organizationName}, '%')
+            </if>
+            <if test="param.organizationFullName != null">
+                AND a.organization_full_name LIKE CONCAT('%', #{param.organizationFullName}, '%')
+            </if>
+            <if test="param.organizationCode != null">
+                AND a.organization_code LIKE CONCAT('%', #{param.organizationCode}, '%')
+            </if>
+            <if test="param.organizationType != null">
+                AND a.organization_type = #{param.organizationType}
+            </if>
+            <if test="param.leaderId != null">
+                AND a.leader_id = #{param.leaderId}
+            </if>
+            <if test="param.comments != null">
+                AND a.comments LIKE CONCAT('%', #{param.comments}, '%')
+            </if>
+            <if test="param.createTimeStart != null">
+                AND a.create_time &gt;= #{param.createTimeStart}
+            </if>
+            <if test="param.createTimeEnd != null">
+                AND a.create_time &lt;= #{param.createTimeEnd}
+            </if>
+            <if test="param.organizationTypeName != null">
+                AND b.dict_data_name LIKE CONCAT('%', #{param.organizationTypeName}, '%')
+            </if>
+            <if test="param.leaderNickname != null">
+                AND c.nickname LIKE CONCAT('%', #{param.leaderNickname}, '%')
+            </if>
+            <if test="param.leaderUsername != null">
+                AND c.username LIKE CONCAT('%', #{param.leaderUsername}, '%')
+            </if>
+        </where>
+    </sql>
+
+    <!-- 分页查询 -->
+    <select id="selectPageRel" resultType="com.eleadmin.common.system.entity.Organization">
+        <include refid="selectSql"></include>
+    </select>
+
+    <!-- 查询全部 -->
+    <select id="selectListRel" resultType="com.eleadmin.common.system.entity.Organization">
+        <include refid="selectSql"></include>
+    </select>
+
+</mapper>

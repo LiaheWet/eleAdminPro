@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eleadmin.bgm.mapper.BgmAgreementMapper">
+
+    <!-- 关联查询sql -->
+    <sql id="selectSql">
+        SELECT a.*
+        FROM bgm_agreement a
+        <where>
+            <if test="param.agreementId != null">
+                AND a.agreement_id = #{param.agreementId}
+            </if>
+            <if test="param.agreementNumber != null">
+                AND a.agreement_number LIKE CONCAT('%', #{param.agreementNumber}, '%')
+            </if>
+            <if test="param.agreementVendorId != null">
+                AND a.agreement_vendor_id = #{param.agreementVendorId}
+            </if>
+            <if test="param.agreementVendorName != null">
+                AND a.agreement_vendor_name = #{param.agreementVendorName}
+            </if>
+            <if test="param.agreementMethod != null">
+                AND a.agreement_method LIKE CONCAT('%', #{param.agreementMethod}, '%')
+            </if>
+            <if test="param.agreementContact != null">
+                AND a.agreement_contact LIKE CONCAT('%', #{param.agreementContact}, '%')
+            </if>
+            <if test="param.agreementPhone != null">
+                AND a.agreement_phone LIKE CONCAT('%', #{param.agreementPhone}, '%')
+            </if>
+            <if test="param.agreementBuyTime != null">
+                AND a.agreement_buy_time LIKE CONCAT('%', #{param.agreementBuyTime}, '%')
+            </if>
+            <if test="param.agreementPurchaser != null">
+                AND a.agreement_purchaser = #{param.agreementPurchaser}
+            </if>
+            <if test="param.agreementAddress != null">
+                AND a.agreement_address LIKE CONCAT('%', #{param.agreementAddress}, '%')
+            </if>
+            <if test="param.agreementException != null">
+                AND a.agreement_exception LIKE CONCAT('%', #{param.agreementException}, '%')
+            </if>
+            <if test="param.agreementBreach != null">
+                AND a.agreement_breach LIKE CONCAT('%', #{param.agreementBreach}, '%')
+            </if>
+            <if test="param.agreementRemark != null">
+                AND a.agreement_remark LIKE CONCAT('%', #{param.agreementRemark}, '%')
+            </if>
+            <if test="param.agreementStatus != null">
+                AND a.agreement_status = #{param.agreementStatus}
+            </if>
+            <if test="param.time1 != null">
+                AND a.agreement_create_time > #{param.time1}
+            </if>
+            <if test="param.time2 != null">
+                AND  #{param.time2}> a.agreement_create_time
+            </if>
+        </where>
+    </sql>
+
+    <!-- 分页查询 -->
+    <select id="selectPageRel" resultType="com.eleadmin.bgm.entity.BgmAgreement">
+        <include refid="selectSql"></include>
+    </select>
+
+    <!-- 查询全部 -->
+    <select id="selectListRel" resultType="com.eleadmin.bgm.entity.BgmAgreement">
+        <include refid="selectSql"></include>
+    </select>
+    <resultMap id="AgreementResultMap" type="com.eleadmin.bgm.param.BgmAgreementParam">
+        <id column="agreement_id" property="agreementId"/>
+        <result column="agreement_number" property="agreementNumber"/>
+        <result column="agreement_vendor_id" property="agreementVendorId"/>
+        <result column="agreement_vendor_name" property="agreementVendorName"/>
+        <result column="agreement_method" property="agreementMethod"/>
+        <result column="agreement_contact" property="agreementContact"/>
+        <result column="agreement_phone" property="agreementPhone"/>
+        <result column="agreement_create_time" property="agreementCreateTime"/>
+        <result column="agreement_buy_time" property="agreementBuyTime"/>
+        <result column="agreement_address" property="agreementAddress"/>
+        <result column="agreement_exception" property="agreementException"/>
+        <result column="agreement_breach" property="agreementBreach"/>
+        <result column="agreement_remark" property="agreementRemark"/>
+        <result column="agreement_purchaser" property="agreementPurchaser"/>
+        <result column="agreement_status" property="agreementStatus"/>
+        <!-- 映射子对象 -->
+        <collection property="supplyMaterialList" ofType="com.eleadmin.bgm.entity.BgmAgreementMaterial">
+            <id column="am_id" property="amId"/>
+            <result column="am_number" property="amNumber"/>
+            <result column="create_time" property="createTime"/>
+            <result column="supply_name" property="supplyName"/>
+            <result column="material_name" property="materialName"/>
+            <result column="measurement" property="measurement"/>
+            <result column="number" property="number"/>
+            <!--<result column="price" property="price"/>-->
+            <result column="price" property="price" jdbcType="DECIMAL" typeHandler
+                    ="org.apache.ibatis.type.BigDecimalTypeHandler"/>
+            <!--<result column="totalPrice" property="totalPrice"/>-->
+            <result column="total_price" property="totalPrice" jdbcType="DECIMAL"
+                    typeHandler="org.apache.ibatis.type.BigDecimalTypeHandler"/>
+        </collection>
+    </resultMap>
+    <!-- 查询全部（自写） -->
+    <select id="pageList" resultMap="AgreementResultMap">
+        SELECT a.*, m.*
+        FROM bgm_agreement a
+                 LEFT JOIN bgm_agreement_material m ON a.agreement_number = m.am_number
+        <where>
+        <if test="param.agreementId != null">
+            AND a.agreement_id = #{param.agreementId}
+        </if>
+        </where>
+    </select>
+
+</mapper>

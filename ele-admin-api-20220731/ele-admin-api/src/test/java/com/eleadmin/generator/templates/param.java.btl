@@ -1,0 +1,146 @@
+package ${cfg.packageName!}.${package.ModuleName}.param;
+
+import ${cfg.packageName!}.common.core.annotation.QueryField;
+import ${cfg.packageName!}.common.core.annotation.QueryType;
+import ${cfg.packageName!}.common.core.web.BaseParam;
+import com.fasterxml.jackson.annotation.JsonInclude;
+<% if(swagger2) { %>
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+<% } %>
+<% if(entityLombokModel) { %>
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+    <% if(chainModel) { %>
+import lombok.experimental.Accessors;
+    <% } %>
+<% } %>
+
+/**
+ * ${table.comment!}查询参数
+ *
+ * @author ${author}
+ * @since ${date(), 'yyyy-MM-dd HH:mm:ss'}
+ */
+<% if(entityLombokModel) { %>
+@Data
+    <% if(isNotEmpty(superEntityClass)) { %>
+@EqualsAndHashCode(callSuper = true)
+    <% } else { %>
+@EqualsAndHashCode(callSuper = false)
+    <% } %>
+    <% if(chainModel) { %>
+@Accessors(chain = true)
+    <% } %>
+<% } %>
+@JsonInclude(JsonInclude.Include.NON_NULL)
+<% if(swagger2) { %>
+@ApiModel(value = "${entity}Param对象", description = "${table.comment!''}查询参数")
+<% } %>
+public class ${entity}Param extends BaseParam {
+<% if(entitySerialVersionUID) { %>
+    private static final long serialVersionUID = 1L;
+<% } %>
+<% /** -----------BEGIN 字段循环遍历----------- **/ %>
+<% for(field in table.fields) { %>
+    <%
+    var keyPropertyName;
+    if(field.keyFlag) {
+        keyPropertyName = field.propertyName;
+    }
+    // 排除的字段
+    if(array.contain(cfg.paramExcludeFields, field.name)) {
+        continue;
+    }
+    %>
+
+    <% if(isNotEmpty(field.comment)) { %>
+        <% if(swagger2) { %>
+    @ApiModelProperty(value = "${field.comment}")
+        <% }else{ %>
+    /**
+     * ${field.comment}
+     */
+        <% } %>
+    <% } %>
+    <% /* 主键 */ %>
+    <% if(field.keyFlag) { %>
+    @QueryField(type = QueryType.EQ)
+    <% /* 使用EQ的字段 */ %>
+    <% } else if(array.contain(cfg.paramEqType, field.propertyType)) { %>
+    @QueryField(type = QueryType.EQ)
+    <% } %>
+    <% /* 使用String类型的字段 */ %>
+    <% if(array.contain(cfg.paramToStringType, field.propertyType)) { %>
+    private String ${field.propertyName};
+    <% } else { %>
+    <% /* 普通字段 */ %>
+    private ${field.propertyType} ${field.propertyName};
+    <% } %>
+<% } %>
+<% /** -----------END 字段循环遍历----------- **/ %>
+
+<% if(!entityLombokModel) { %>
+    <% for(field in table.fields) { %>
+        <%
+        var getprefix = '';
+        if(field.propertyType == 'boolean') {
+            getprefix = 'is';
+        } else {
+            getprefix = 'get';
+        }
+        // 排除的字段
+        if(array.contain(cfg.paramExcludeFields, field.name)) {
+            continue;
+        }
+        %>
+        <% if(array.contain(cfg.paramToStringType, field.propertyType)) { %>
+    public String ${getprefix}${field.capitalName}() {
+        <% } else { %>
+    public ${field.propertyType} ${getprefix}${field.capitalName}() {
+        <% } %>
+        return ${field.propertyName};
+    }
+
+        <% if(chainModel) { %>
+            <% if(array.contain(cfg.paramToStringType, field.propertyType)) { %>
+    public ${entity} set${field.capitalName}(String ${field.propertyName}) {
+            <% } else { %>
+    public ${entity} set${field.capitalName}(${field.propertyType} ${field.propertyName}) {
+            <% } %>
+        <% } else { %>
+            <% if(array.contain(cfg.paramToStringType, field.propertyType)) { %>
+    public void set${field.capitalName}(String ${field.propertyName}) {
+            <% } else { %>
+    public void set${field.capitalName}(${field.propertyType} ${field.propertyName}) {
+            <% } %>
+        <% } %>
+        this.${field.propertyName} = ${field.propertyName};
+        <% if(chainModel){ %>
+        return this;
+        <% } %>
+    }
+
+    <% } %>
+<% } %>
+<% if(!entityLombokModel) { %>
+    @Override
+    public String toString() {
+        return "${entity}{" +
+        <% for(field in table.fields) { %>
+            <%
+            // 排除的字段
+            if(array.contain(cfg.paramExcludeFields, field.name)) {
+                continue;
+            }
+            %>
+            <% if(fieldLP.index == 0) { %>
+        "${field.propertyName}=" + ${field.propertyName} +
+            <% } else { %>
+        ", ${field.propertyName}=" + ${field.propertyName} +
+            <% } %>
+        <% } %>
+        "}";
+    }
+<% } %>
+}

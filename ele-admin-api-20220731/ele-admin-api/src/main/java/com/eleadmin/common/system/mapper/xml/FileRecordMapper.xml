@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.eleadmin.common.system.mapper.FileRecordMapper">
+
+    <!-- 关联查询sql -->
+    <sql id="selectSql">
+        SELECT a.*,
+        b.username create_username,
+        b.nickname create_nickname
+        FROM sys_file_record a
+        LEFT JOIN sys_user b ON a.create_user_id = b.user_id
+        <where>
+            <if test="param.id != null">
+                AND a.id = #{param.id}
+            </if>
+            <if test="param.name != null">
+                AND a.`name` LIKE CONCAT('%', #{param.name}, '%')
+            </if>
+            <if test="param.path != null">
+                AND a.path LIKE CONCAT('%', #{param.path}, '%')
+            </if>
+            <if test="param.createUserId != null">
+                AND a.create_user_id = #{param.createUserId}
+            </if>
+            <if test="param.comments != null">
+                AND a.comments LIKE CONCAT('%', #{param.comments}, '%')
+            </if>
+            <if test="param.createTimeStart != null">
+                AND a.create_time &gt;= #{param.createTimeStart}
+            </if>
+            <if test="param.createTimeEnd != null">
+                AND a.create_time &lt;= #{param.createTimeEnd}
+            </if>
+            <if test="param.deleted != null">
+                AND a.deleted = #{param.deleted}
+            </if>
+            <if test="param.deleted == null">
+                AND a.deleted = 0
+            </if>
+            <if test="param.createUsername != null">
+                AND b.username = #{param.createUsername}
+            </if>
+            <if test="param.createNickname != null">
+                AND b.nickname LIKE CONCAT('%', #{param.createNickname}, '%')
+            </if>
+        </where>
+    </sql>
+
+    <!-- 分页查询 -->
+    <select id="selectPageRel" resultType="com.eleadmin.common.system.entity.FileRecord">
+        <include refid="selectSql"></include>
+    </select>
+
+    <!-- 查询全部 -->
+    <select id="selectListRel" resultType="com.eleadmin.common.system.entity.FileRecord">
+        <include refid="selectSql"></include>
+    </select>
+
+    <!-- 根据path查询 -->
+    <select id="getByIdPath" resultType="com.eleadmin.common.system.entity.FileRecord">
+        SELECT *
+        FROM sys_file_record
+        WHERE path = #{path}
+    </select>
+
+</mapper>

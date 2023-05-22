@@ -1,0 +1,55 @@
+<%
+var idPropertyName, idComment;
+for(field in table.fields) {
+    if(field.keyFlag) {
+        idPropertyName = field.propertyName;
+        idComment = field.comment;
+    }
+}
+%>
+package ${package.Service};
+
+import ${superServiceClassPackage};
+import ${cfg.packageName!}.common.core.web.PageResult;
+import ${package.Entity}.${entity};
+import ${cfg.packageName!}.${package.ModuleName}.param.${entity}Param;
+
+import java.util.List;
+
+/**
+ * ${table.comment!}Service
+ *
+ * @author ${author}
+ * @since ${date(), 'yyyy-MM-dd HH:mm:ss'}
+ */
+<% if(kotlin){ %>
+interface ${table.serviceName} : ${superServiceClass}<${entity}>
+<% }else{ %>
+public interface ${table.serviceName} extends ${superServiceClass}<${entity}> {
+
+    /**
+     * 分页关联查询
+     *
+     * @param param 查询参数
+     * @return PageResult<${entity}>
+     */
+    PageResult<${entity}> pageRel(${entity}Param param);
+
+    /**
+     * 关联查询全部
+     *
+     * @param param 查询参数
+     * @return List<${entity}>
+     */
+    List<${entity}> listRel(${entity}Param param);
+
+    /**
+     * 根据id查询
+     *
+     * @param ${idPropertyName!} ${idComment!}
+     * @return ${entity}
+     */
+    ${entity} getByIdRel(Integer ${idPropertyName!});
+
+}
+<% } %>
