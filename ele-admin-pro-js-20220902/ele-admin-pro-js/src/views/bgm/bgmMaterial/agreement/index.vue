@@ -395,6 +395,7 @@ const getSerialNumber = () => {
   const month = (now.getMonth() + 1).toString().padStart(2, '0');
   const date = now.getDate().toString().padStart(2, '0');
   const serial = Math.floor(Math.random() * 900) + 100;
+
   return `XY${year}${month}${date}${serial}`;
 }//获取编号，给新增订单（表单）
 const getCurrentTime = () => {

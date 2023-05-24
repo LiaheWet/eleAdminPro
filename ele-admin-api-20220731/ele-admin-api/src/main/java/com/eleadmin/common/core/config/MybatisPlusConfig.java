@@ -53,7 +53,8 @@ public class MybatisPlusConfig {
                         "bgm_purchaser",//采购员
                         "bgm_vendor_contact",//供应商联系人
                         "bgm_vendor_account",//供应商账户
-                        "bgm_vendor_material"//供应商供应材料
+                        "bgm_vendor_material",//供应商供应材料
+                        "bgm_receive_management"//收料管理表
 
                 ).contains(tableName);
             }
