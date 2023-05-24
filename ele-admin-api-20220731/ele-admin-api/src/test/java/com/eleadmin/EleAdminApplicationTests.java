@@ -27,6 +27,7 @@ import javax.xml.crypto.Data;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -112,17 +113,11 @@ public class EleAdminApplicationTests {
     @Test
     void timeTest() throws ParseException {
         BgmAgreementParam param=new BgmAgreementParam();
-        String date1 = "2023-05-14 00:00:00";
-        String date2 = "2023-12-01 00:00:00";
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd mm:HH:ss");
-        Date time1 = sdf.parse(date1);
-        Date time2 = sdf.parse(date2);
-        System.out.println(time1);
-        System.out.println(time2);
-        param.setTime1(time1);
-        param.setTime2(time2);
-        //PageParam<BgmAgreement, BgmAgreementParam> page = new PageParam<>(param);
-        //page.setDefaultOrder("create_time desc");
-        //System.out.println(bgmAgreementService.pageRel(param).getList());
+        List<Integer>list=new ArrayList<>();
+        //list.add(1);
+        list.add(3);
+        list.add(4);
+        param.setAgreementStatusList(list);
+        System.out.println(bgmAgreementService.pageRel(param).getList());
     }
 }

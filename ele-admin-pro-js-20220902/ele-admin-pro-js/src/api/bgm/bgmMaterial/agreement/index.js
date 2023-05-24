@@ -1,6 +1,8 @@
 import request from "@/utils/request";
 
 
+
+
 /**
  * 根据信息查询协议相关信息
  */
@@ -17,10 +19,20 @@ export async function selectBgmAgreementPro(params) {
 /**
  * 分页查询协议
  */
-export async function pageBgmAgreement(params) {
+/*export async function pageBgmAgreement(params) {
   const res = await request.get('/bgm/bgmAgreement/page',{
     params
   });
+  if (res.data.code === 0) {
+    return res.data.data;
+  }
+  return Promise.reject(new Error(res.data.message));
+}*/
+export async function pageBgmAgreement(params) {
+  const url = '/bgm/bgmAgreement/page?' + Object.keys(params)
+    .map(k => `${encodeURIComponent(k)}=${encodeURIComponent(params[k])}`)
+    .join('&');
+  const res = await request.get(url);
   if (res.data.code === 0) {
     return res.data.data;
   }

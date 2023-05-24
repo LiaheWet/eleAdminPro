@@ -16,7 +16,7 @@
 
           <el-divider direction="vertical"/>
           <el-button class="add-button" style="color: #8eb97e" @click="">启用</el-button>
-          <el-button class="modify-button" style="color: #00a3ff" @click="">关注</el-button>
+          <el-button class="modify-button" style="color: #00a3ff" @click="test">关注</el-button>
         </div>
         <!--    查询部分-->
         <div style="background-color: #edeef0;">
@@ -114,23 +114,19 @@
               <el-table-column label="状态" prop="agreementStatus" width="80px">
                 <template #default="{row}">
                   <el-tag
-                    :class="{'bgm-shallow-red-bg': row.agreementStatus === 0,'bgm-shallow-green-bg': row.agreementStatus === 1}"
-                    :type="row.agreementStatus === 1 ? 'success' : 'danger'">
-                    {{ row.agreementStatus === 1 ? '启用' : '停用' }}
+                    :class="{
+                            'selected0': row.agreementStatus === 0,
+                            'selected1': row.agreementStatus === 1,
+                            'selected2': row.agreementStatus === 2,
+                            'selected3': row.agreementStatus === 3,
+                            'selected4': row.agreementStatus === 4
+                          }">
+                   {{getStatus(row.agreementStatus)}}
                   </el-tag>
                 </template>
               </el-table-column>
               <el-table-column label="制定时间" prop="agreementCreateTime" width="130px"></el-table-column>
               <el-table-column label="供应商" prop="agreementVendorName"></el-table-column>
-              <!--              <el-table-column label="供应原材料" width="160px">
-                              <template #default="{ row }">
-                                {{
-                                  row.supplyMaterialList.length > 1
-                                    ? row.supplyMaterialList[0].supplyName + ", ..."
-                                    : row.supplyMaterialList[0].supplyName
-                                }}
-                              </template>
-                            </el-table-column>-->
               <el-table-column label="联系人" prop="agreementContact"></el-table-column>
               <el-table-column label="联系方式" prop="agreementPhone" width="90px"></el-table-column>
               <el-table-column label="备注" prop="agreementRemark" width="90px"></el-table-column>
@@ -157,8 +153,9 @@
         </el-container>
       </el-main>
       <el-footer>
-        <!--          分页-->
-        <div class="demo-pagination-block">
+        <!--          分页 和  状态选择器-->
+        <div class="demo-pagination-block" style="margin-top: 2px">
+          <!--          分页-->
           <el-pagination
             v-model:current-page="currentPage"
             v-model:page-size="pageSize"
@@ -168,8 +165,33 @@
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
           />
-          <el-button class="add-button" style="color: #8eb97e" @click="">启用</el-button>
-          <el-button class="modify-button" style="color: #00a3ff" @click="">停用</el-button>
+          <!--          状态选择器-->
+          <el-button :class="{ 'selected0': selectedStatus.includes(0), 'default': !selectedStatus.includes(0) }"
+                     class="add-button"
+                     style="height: 30px"
+                     @click="toggleStatus(0)">制单
+          </el-button>
+          <el-button :class="{ 'selected1': selectedStatus.includes(1), 'default': !selectedStatus.includes(1) }"
+                     class="add-button"
+                     style="height: 30px"
+                     @click="toggleStatus(1)">审核中
+          </el-button>
+          <el-button :class="{ 'selected2': selectedStatus.includes(2), 'default': !selectedStatus.includes(2) }"
+                     class="add-button"
+                     style="height: 30px"
+                     @click="toggleStatus(2)">执行中
+          </el-button>
+          <el-button :class="{ 'selected3': selectedStatus.includes(3), 'default': !selectedStatus.includes(3) }"
+                     class="add-button"
+                     style="height: 30px"
+                     @click="toggleStatus(3)">停用
+          </el-button>
+          <el-button :class="{ 'selected4': selectedStatus.includes(4), 'default': !selectedStatus.includes(4) }"
+                     class="add-button"
+                     style="height: 30px"
+                     @click="toggleStatus(4)">已完成
+          </el-button>
+
         </div>
       </el-footer>
     </el-container>
@@ -191,7 +213,11 @@ import {ElMessage} from "element-plus";
 import {ExclamationCircleOutlined} from "@ant-design/icons-vue";
 import {messageLoading} from "ele-admin-pro";
 import {message, Modal} from "ant-design-vue/es";
-import {pageBgmAgreement, removeBgmAgreementPro, selectBgmAgreementPro} from "@/api/bgm/bgmMaterial/agreement";
+import {
+  pageBgmAgreement,
+  removeBgmAgreementPro,
+  selectBgmAgreementPro,
+} from "@/api/bgm/bgmMaterial/agreement";
 import AgreementEdit from "@/views/bgm/bgmMaterial/agreement/components/agreement-edit.vue";
 import {pageBgmVendor} from "@/api/bgm/bgmMaterial/vendor";
 import {pageBgmSupplyMaterial, removeBgmSupplyMaterial} from "@/api/bgm/bgmMaterial/supply";
@@ -219,10 +245,10 @@ const selectFormData = reactive({
   makeTime2: new Date(`${new Date().getFullYear()}-12-31T23:59:59`),
 })
 //-----搜索栏(所需数据)--------
-const purchasers = ref([]);
-const vendors = ref([]);
-const supplyMaterials = ref([]);
-
+const purchasers = ref([]);//采购人列表
+const vendors = ref([]);//供应商
+const supplyMaterials = ref([]);//供应材料（未实现）
+const selectedStatus = ref([0, 1, 2, 3, 4]);//状态集合
 
 const getTableData = async () => {
   const res = await pageBgmAgreement({
@@ -235,7 +261,7 @@ const getTableData = async () => {
   total.value = res.count;
   //console.log(tableData.value);
   //获取第一个侧边表格数据
-  if (tableData.value.length > 0) {
+  if (res.count > 0) {
     await CurrentChange(tableData.value[0]);
   }
 };//获取表格数据
@@ -260,8 +286,7 @@ const select = async () => {
     second: '2-digit',
     weekday: 'short'
   });
-  console.log("ss",time1,time2);
-  const res = await pageBgmAgreement({
+  const param = {
     page: currentPage.value,
     limit: pageSize.value,
     agreementNumber: selectFormData.agreementNumber,
@@ -269,13 +294,17 @@ const select = async () => {
     agreementVendorId: selectFormData.agreementVendorId,
     time1: time1,
     time2: time2,
-  });
+    agreementStatusList: selectedStatus.value
+  }
+  console.log("按钮", param.agreementStatusList)
+  const res = await pageBgmAgreement(param);
+
   console.log('成功获取到table数据：', res);
   tableData.value = res.list;
   total.value = res.count;
   //console.log(tableData.value);
   //获取第一个侧边表格数据
-  if (tableData.value.length > 0) {
+  if (res.count > 0) {
     await CurrentChange(tableData.value[0]);
   }
 }//搜索框的搜索功能
@@ -378,7 +407,32 @@ const getCurrentTime = () => {
   const seconds = now.getSeconds().toString().padStart(2, '0');
   return `${year}-${month}-${date} ${hours}:${minutes}:${seconds}`;
 }//获取当前时间，给新增订单（表单）
-
+const toggleStatus = (status) => {
+  const index = selectedStatus.value.indexOf(status)
+  if (index === -1) {
+    selectedStatus.value.push(status) // 选中状态
+  } else {
+    selectedStatus.value.splice(index, 1) // 取消选中状态
+  }
+  selectedStatus.value.sort((a, b) => a - b) // 对数组元素进行排序
+  select();
+};//更改状态集
+const getStatus=(status)=>{
+  switch (status) {
+    case 0:
+      return '制单';
+    case 1:
+      return '审核中';
+    case 2:
+      return '执行中';
+    case 3:
+      return '停用';
+    case 4:
+      return '已完成';
+    default:
+      return '';
+  }
+}
 //------对话框（对表单数据传递）----
 const closeDialog = () => {
   formData.value = {};
@@ -426,6 +480,7 @@ const deleteAgreement = () => {
   });
 }//删除协议及关联数据
 
+
 onMounted(() => {
   //获取表格数据
   getTableData();
@@ -453,10 +508,10 @@ onMounted(() => {
 
 .el-footer {
   position: fixed;
-  bottom: 10px;
+  bottom: 5px;
   left: 0px;
   width: 100%;
-  height: 30px;
+  height: 35px;
   background: white;
 }
 
@@ -494,5 +549,39 @@ onMounted(() => {
   display: flex;
 }
 
+.selected0 {
+  width: 60px;
+  background-color: #71838d;
+  color: #fff;
+}
 
+.selected1 {
+  width: 60px;
+  background-color: #409EFF;
+  color: #fff;
+}
+
+.selected2 {
+  width: 60px;
+  background-color: #f38541;
+  color: #fff;
+}
+
+.selected3 {
+  width: 60px;
+  background-color: #e51c33;
+  color: #fff;
+}
+
+.selected4 {
+  width: 60px;
+  background-color: #3cc007;
+  color: #fff;
+}
+
+
+.default {
+  background-color: #fff;
+  color: #000;
+}
 </style>

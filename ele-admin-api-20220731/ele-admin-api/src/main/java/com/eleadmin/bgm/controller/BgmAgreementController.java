@@ -1,8 +1,6 @@
 package com.eleadmin.bgm.controller;
 
 import com.eleadmin.bgm.entity.BgmAgreementMaterial;
-import com.eleadmin.bgm.entity.BgmVendor;
-import com.eleadmin.bgm.entity.BgmVendorContact;
 import com.eleadmin.bgm.service.BgmAgreementMaterialService;
 import com.eleadmin.common.core.web.BaseController;
 import com.eleadmin.bgm.service.BgmAgreementService;
@@ -15,16 +13,12 @@ import com.eleadmin.common.core.web.BatchParam;
 import com.eleadmin.common.core.annotation.OperationLog;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.BeanUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -138,15 +132,8 @@ public class BgmAgreementController extends BaseController {
         //page.setDefaultOrder("create_time desc");
         //return success(bgmAgreementService.page(page, page.getWrapper()));
         // 使用关联查询
-/*        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Date makeTime1 = dateFormat.parse(param.getTime1());
-        Date makeTime2 = dateFormat.parse(param.getTime2());
-        param.setTime1(makeTime1);
-        param.setTime2(makeTime2);*/
-        System.out.println(param);
         return success(bgmAgreementService.pageRel(param));
     }
-
     @PreAuthorize("hasAuthority('bgm:bgmAgreement:list')")
     @OperationLog
     @ApiOperation("查询全部采购协议")
@@ -219,10 +206,13 @@ public class BgmAgreementController extends BaseController {
     @ApiOperation("批量删除采购协议")
     @DeleteMapping("/batch")
     public ApiResult<?> removeBatch(@RequestBody List<Integer> ids) {
-        if (bgmAgreementService.removeByIds(ids)) {
+        System.out.println("删除" + ids);
+        /*if (bgmAgreementService.removeByIds(ids)) {
             return success("删除成功");
-        }
+        }*/
         return fail("删除失败");
     }
+
+
 
 }

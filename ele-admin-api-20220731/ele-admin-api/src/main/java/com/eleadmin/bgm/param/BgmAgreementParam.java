@@ -85,4 +85,7 @@ public class BgmAgreementParam extends BaseParam {
     @QueryField(type = QueryType.LE)
     private Date time2;
 
+    @ApiModelProperty(value = "状态数组")
+    private List<Integer> agreementStatusList;
+
 }

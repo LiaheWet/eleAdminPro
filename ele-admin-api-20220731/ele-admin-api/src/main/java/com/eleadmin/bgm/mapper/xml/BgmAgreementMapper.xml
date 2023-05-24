@@ -46,8 +46,11 @@
             <if test="param.agreementRemark != null">
                 AND a.agreement_remark LIKE CONCAT('%', #{param.agreementRemark}, '%')
             </if>
-            <if test="param.agreementStatus != null">
-                AND a.agreement_status = #{param.agreementStatus}
+            <if test="param.agreementStatusList != null and param.agreementStatusList.size() > 0">
+                AND a.agreement_status IN
+                <foreach collection="param.agreementStatusList" item="status" open="(" close=")" separator=",">
+                    #{status}
+                </foreach>
             </if>
             <if test="param.time1 != null">
                 AND a.agreement_create_time > #{param.time1}
