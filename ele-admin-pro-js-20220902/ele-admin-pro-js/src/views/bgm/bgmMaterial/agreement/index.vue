@@ -220,7 +220,7 @@ import {
 } from "@/api/bgm/bgmMaterial/agreement";
 import AgreementEdit from "@/views/bgm/bgmMaterial/agreement/components/agreement-edit.vue";
 import {pageBgmVendor} from "@/api/bgm/bgmMaterial/vendor";
-import {pageBgmSupplyMaterial, removeBgmSupplyMaterial} from "@/api/bgm/bgmMaterial/supply";
+import {pageBgmSupplyMaterial} from "@/api/bgm/bgmMaterial/supply";
 import {pageBgmPurchaser} from "@/api/bgm/bgmMaterial/purchaser";
 
 //-------供应商--------
