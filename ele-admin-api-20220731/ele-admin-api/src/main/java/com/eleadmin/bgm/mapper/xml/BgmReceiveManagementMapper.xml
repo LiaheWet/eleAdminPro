@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eleadmin.bgm.mapper.BgmReceiveManagementMapper">
+
+    <!-- 关联查询sql -->
+    <sql id="selectSql">
+        SELECT a.*
+        FROM bgm_receive_management a
+        <where>
+            <if test="param.id != null">
+                AND a.id = #{param.id}
+            </if>
+            <if test="param.managementNumber != null">
+                AND a.management_number LIKE CONCAT('%', #{param.managementNumber}, '%')
+            </if>
+            <if test="param.agreementNumber != null">
+                AND a.agreement_number LIKE CONCAT('%', #{param.agreementNumber}, '%')
+            </if>
+            <if test="param.vendorId != null">
+                AND a.vendor_id = #{param.vendorId}
+            </if>
+            <if test="param.smId != null">
+                AND a.sm_id = #{param.smId}
+            </if>
+            <if test="param.fleecetime != null">
+                AND a.fleeceTime LIKE CONCAT('%', #{param.fleecetime}, '%')
+            </if>
+            <if test="param.collectedweight != null">
+                AND a.collectedWeight = #{param.collectedweight}
+            </if>
+            <if test="param.warehousingweight != null">
+                AND a.warehousingWeight = #{param.warehousingweight}
+            </if>
+            <if test="param.collectednumber != null">
+                AND a.collectedNumber LIKE CONCAT('%', #{param.collectednumber}, '%')
+            </if>
+            <if test="param.claspweight != null">
+                AND a.claspWeight = #{param.claspweight}
+            </if>
+            <if test="param.storagebin != null">
+                AND a.storageBin LIKE CONCAT('%', #{param.storagebin}, '%')
+            </if>
+            <if test="param.peelingtime != null">
+                AND a.peelingTime LIKE CONCAT('%', #{param.peelingtime}, '%')
+            </if>
+            <if test="param.grossweight != null">
+                AND a.grossWeight = #{param.grossweight}
+            </if>
+            <if test="param.tareweight != null">
+                AND a.tareWeight = #{param.tareweight}
+            </if>
+            <if test="param.netweight != null">
+                AND a.netWeight = #{param.netweight}
+            </if>
+            <if test="param.transportvehicle != null">
+                AND a.transportVehicle LIKE CONCAT('%', #{param.transportvehicle}, '%')
+            </if>
+            <if test="param.supplynumber != null">
+                AND a.supplyNumber = #{param.supplynumber}
+            </if>
+            <if test="param.overHairedPersonnel != null">
+                AND a.over_haired_personnel LIKE CONCAT('%', #{param.overHairedPersonnel}, '%')
+            </if>
+            <if test="param.overSkinnedPersonnel != null">
+                AND a.over_skinned_personnel LIKE CONCAT('%', #{param.overSkinnedPersonnel}, '%')
+            </if>
+            <if test="param.cancellation != null">
+                AND a.cancellation LIKE CONCAT('%', #{param.cancellation}, '%')
+            </if>
+            <if test="param.remark != null">
+                AND a.remark LIKE CONCAT('%', #{param.remark}, '%')
+            </if>
+            <if test="param.managementStatus != null">
+                AND a.management_status = #{param.managementStatus}
+            </if>
+        </where>
+    </sql>
+
+    <!-- 分页查询 -->
+    <select id="selectPageRel" resultType="com.eleadmin.bgm.entity.BgmReceiveManagement">
+        <include refid="selectSql"></include>
+    </select>
+
+    <!-- 查询全部 -->
+    <select id="selectListRel" resultType="com.eleadmin.bgm.entity.BgmReceiveManagement">
+        <include refid="selectSql"></include>
+    </select>
+
+</mapper>
