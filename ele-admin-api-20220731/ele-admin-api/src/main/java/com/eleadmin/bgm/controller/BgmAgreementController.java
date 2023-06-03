@@ -64,9 +64,11 @@ public class BgmAgreementController extends BaseController {
         for (BgmAgreementMaterial param : bgmAgreementParam.getSupplyMaterialList()) {
             BgmAgreementMaterial material = new BgmAgreementMaterial();
             material.setAmNumber(agreementNumber);
+            material.setSmId(param.getSmId());
             material.setCreateTime(param.getCreateTime());
             material.setSupplyName(param.getSupplyName());
             material.setMaterialName(param.getMaterialName());
+            material.setSpecs(param.getSpecs());
             material.setMeasurement(param.getMeasurement());
             material.setPrice(param.getPrice());
             material.setNumber(param.getNumber());
@@ -91,9 +93,11 @@ public class BgmAgreementController extends BaseController {
         for (BgmAgreementMaterial param : bgmAgreementParam.getSupplyMaterialList()) {
             BgmAgreementMaterial material = new BgmAgreementMaterial();
             material.setAmNumber(bgmAgreementParam.getAgreementNumber());
+            material.setSmId(param.getSmId());
             material.setCreateTime(param.getCreateTime());
             material.setSupplyName(param.getSupplyName());
             material.setMaterialName(param.getMaterialName());
+            material.setSpecs(param.getSpecs());
             material.setMeasurement(param.getMeasurement());
             material.setPrice(param.getPrice());
             material.setNumber(param.getNumber());
@@ -145,7 +149,6 @@ public class BgmAgreementController extends BaseController {
         // 使用关联查询
         //return success(bgmAgreementService.listRel(param));
     }
-
 /*    @PreAuthorize("hasAuthority('bgm:bgmAgreement:list')")
     @OperationLog
     @ApiOperation("根据id查询采购协议")

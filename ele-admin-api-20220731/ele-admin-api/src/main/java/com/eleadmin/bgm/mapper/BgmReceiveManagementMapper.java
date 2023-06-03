@@ -12,7 +12,7 @@ import java.util.List;
  * 收料管理表Mapper
  *
  * @author EleAdmin
- * @since 2023-05-24 21:13:24
+ * @since 2023-05-26 09:37:03
  */
 public interface BgmReceiveManagementMapper extends BaseMapper<BgmReceiveManagement> {
 
@@ -23,7 +23,7 @@ public interface BgmReceiveManagementMapper extends BaseMapper<BgmReceiveManagem
      * @param param 查询参数
      * @return List<BgmReceiveManagement>
      */
-    List<BgmReceiveManagement> selectPageRel(@Param("page") IPage<BgmReceiveManagement> page,
+    List<BgmReceiveManagementParam> selectPageRel(@Param("page") IPage<BgmReceiveManagementParam> page,
                              @Param("param") BgmReceiveManagementParam param);
 
     /**

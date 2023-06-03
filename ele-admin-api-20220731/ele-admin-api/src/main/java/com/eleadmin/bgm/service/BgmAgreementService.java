@@ -52,7 +52,7 @@ public interface BgmAgreementService extends IService<BgmAgreement> {
 
     boolean updatePro(BgmAgreementParam bgmAgreementParam);
 
-     // List<BgmAgreementParam> listPro(BgmAgreementParam param);
+    // List<BgmAgreementParam> listPro(BgmAgreementParam param);
     //  PageResult<BgmAgreementParam> pageList(BgmAgreementParam param);
     BgmAgreementParam selectPro(BgmAgreementParam param);
 }

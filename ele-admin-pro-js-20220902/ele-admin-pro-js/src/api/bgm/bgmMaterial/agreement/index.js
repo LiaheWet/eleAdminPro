@@ -72,6 +72,18 @@ export async function removeBgmAgreementPro(id) {
   }
   return Promise.reject(new Error(res.data.message));
 }
+/**
+ * 查询协议的材料
+ */
+export async function listBgmAgreementMaterial(params) {
+  const res = await request.get('/bgm/bgm-agreement-material', {
+    params
+  });
+  if (res.data.code === 0 && res.data.data) {
+    return res.data.data;
+  }
+  return Promise.reject(new Error(res.data.message));
+}
 
 
 /**

@@ -14,7 +14,7 @@ import lombok.EqualsAndHashCode;
  * 协议订购材料具体数据
  *
  * @author EleAdmin
- * @since 2023-05-16 11:17:57
+ * @since 2023-05-30 17:36:07
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -28,6 +28,9 @@ public class BgmAgreementMaterial implements Serializable {
     @ApiModelProperty(value = "协议编号")
     private String amNumber;
 
+    @ApiModelProperty(value = "供应材料id")
+    private Integer smId;
+
     @ApiModelProperty(value = "制定时间")
     private String createTime;
 
@@ -36,6 +39,9 @@ public class BgmAgreementMaterial implements Serializable {
 
     @ApiModelProperty(value = "平台原材料")
     private String materialName;
+
+    @ApiModelProperty(value = "规格")
+    private String specs;
 
     @ApiModelProperty(value = "计量单位")
     private String measurement;

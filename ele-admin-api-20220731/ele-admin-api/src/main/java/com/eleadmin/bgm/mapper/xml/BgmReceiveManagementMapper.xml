@@ -4,8 +4,10 @@
 
     <!-- 关联查询sql -->
     <sql id="selectSql">
-        SELECT a.*
+        SELECT a.*,b.*,c.vendor_name
         FROM bgm_receive_management a
+        LEFT JOIN bgm_supply_material b ON a.sm_id = b.supply_material_id
+        LEFT JOIN bgm_vendor c ON a.vendor_id = c.vendor_id
         <where>
             <if test="param.id != null">
                 AND a.id = #{param.id}
@@ -22,41 +24,44 @@
             <if test="param.smId != null">
                 AND a.sm_id = #{param.smId}
             </if>
-            <if test="param.fleecetime != null">
-                AND a.fleeceTime LIKE CONCAT('%', #{param.fleecetime}, '%')
+            <if test="param.receiveMethod != null">
+                AND a.receive_method LIKE CONCAT('%', #{param.receiveMethod}, '%')
             </if>
-            <if test="param.collectedweight != null">
-                AND a.collectedWeight = #{param.collectedweight}
+            <if test="param.collectedWeight != null">
+                AND a.collected_weight = #{param.collectedWeight}
             </if>
-            <if test="param.warehousingweight != null">
-                AND a.warehousingWeight = #{param.warehousingweight}
+            <if test="param.warehousingWeight != null">
+                AND a.warehousing_weight = #{param.warehousingWeight}
             </if>
-            <if test="param.collectednumber != null">
-                AND a.collectedNumber LIKE CONCAT('%', #{param.collectednumber}, '%')
+            <if test="param.collectedNumber != null">
+                AND a.collected_number LIKE CONCAT('%', #{param.collectedNumber}, '%')
             </if>
-            <if test="param.claspweight != null">
-                AND a.claspWeight = #{param.claspweight}
+            <if test="param.claspWeight != null">
+                AND a.clasp_weight = #{param.claspWeight}
             </if>
-            <if test="param.storagebin != null">
-                AND a.storageBin LIKE CONCAT('%', #{param.storagebin}, '%')
+            <if test="param.storageBin != null">
+                AND a.storage_bin LIKE CONCAT('%', #{param.storageBin}, '%')
             </if>
-            <if test="param.peelingtime != null">
-                AND a.peelingTime LIKE CONCAT('%', #{param.peelingtime}, '%')
+            <if test="param.grossWeight != null">
+                AND a.gross_weight = #{param.grossWeight}
             </if>
-            <if test="param.grossweight != null">
-                AND a.grossWeight = #{param.grossweight}
+            <if test="param.tareWeight != null">
+                AND a.tare_weight = #{param.tareWeight}
             </if>
-            <if test="param.tareweight != null">
-                AND a.tareWeight = #{param.tareweight}
+            <if test="param.netWeight != null">
+                AND a.net_weight = #{param.netWeight}
             </if>
-            <if test="param.netweight != null">
-                AND a.netWeight = #{param.netweight}
+            <if test="param.buckleWeight != null">
+                AND a.buckle_weight = #{param.buckleWeight}
             </if>
-            <if test="param.transportvehicle != null">
-                AND a.transportVehicle LIKE CONCAT('%', #{param.transportvehicle}, '%')
+            <if test="param.transportVehicle != null">
+                AND a.transport_vehicle LIKE CONCAT('%', #{param.transportVehicle}, '%')
             </if>
-            <if test="param.supplynumber != null">
-                AND a.supplyNumber = #{param.supplynumber}
+            <if test="param.driverName != null">
+                AND a.driver_name LIKE CONCAT('%', #{param.driverName}, '%')
+            </if>
+            <if test="param.supplyNumber != null">
+                AND a.supply_number = #{param.supplyNumber}
             </if>
             <if test="param.overHairedPersonnel != null">
                 AND a.over_haired_personnel LIKE CONCAT('%', #{param.overHairedPersonnel}, '%')
@@ -70,14 +75,29 @@
             <if test="param.remark != null">
                 AND a.remark LIKE CONCAT('%', #{param.remark}, '%')
             </if>
-            <if test="param.managementStatus != null">
-                AND a.management_status = #{param.managementStatus}
+            <if test="param.smName != null">
+                AND b.sm_name = #{param.smName}
+            </if>
+            <if test="param.smTypeName != null">
+                AND b.sm_type_name = #{param.smTypeName}
+            </if>
+            <if test="param.managementStatusList != null and param.managementStatusList.size() > 0">
+                AND a.management_status IN
+                <foreach collection="param.managementStatusList" item="status" open="(" close=")" separator=",">
+                    #{status}
+                </foreach>
+            </if>
+            <if test="param.time1 != null">
+                AND a.fleece_time > #{param.time1}
+            </if>
+            <if test="param.time2 != null">
+                AND  #{param.time2}> a.fleece_time
             </if>
         </where>
     </sql>
 
     <!-- 分页查询 -->
-    <select id="selectPageRel" resultType="com.eleadmin.bgm.entity.BgmReceiveManagement">
+    <select id="selectPageRel" resultType="com.eleadmin.bgm.param.BgmReceiveManagementParam">
         <include refid="selectSql"></include>
     </select>
 

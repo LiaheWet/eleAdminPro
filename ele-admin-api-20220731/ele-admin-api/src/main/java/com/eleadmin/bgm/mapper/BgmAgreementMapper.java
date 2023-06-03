@@ -27,7 +27,7 @@ public interface BgmAgreementMapper extends BaseMapper<BgmAgreement> {
      * @return List<BgmAgreement>
      */
     List<BgmAgreement> selectPageRel(@Param("page") IPage<BgmAgreement> page,
-                             @Param("param") BgmAgreementParam param);
+                                     @Param("param") BgmAgreementParam param);
 
     /**
      * 查询全部

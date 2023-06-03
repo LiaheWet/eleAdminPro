@@ -30,9 +30,6 @@ public class BgmAgreementServiceImpl extends ServiceImpl<BgmAgreementMapper, Bgm
     @Autowired
     private BgmAgreementMapper bgmAgreementMapper;
 
-    @Autowired
-    private BgmAgreementMaterialMapper bgmAgreementMaterialMapper;
-
     @Override
     public PageResult<BgmAgreement> pageRel(BgmAgreementParam param) {
         PageParam<BgmAgreement, BgmAgreementParam> page = new PageParam<>(param);

@@ -56,6 +56,7 @@
     </el-table>
 
     <!--          分页-->
+    <el-footer>
     <div class="demo-pagination-block" >
       <el-pagination
         v-model:current-page="currentPage"
@@ -67,7 +68,7 @@
         @current-change="handleCurrentChange"
       />
     </div>
-
+    </el-footer>
     <!--    弹出框-->
     <supply-edit :show-dialog="showDialog" @onClose="handleCloseDialog" :formData="formData" />
 
@@ -257,6 +258,14 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.el-footer {
+  position: fixed;
+  bottom: 5px;
+  left: 0px;
+  width: 100%;
+  height: 35px;
+  background: white;
+}
 .title-container {
   display: flex;
   align-items: center;
@@ -299,10 +308,6 @@ onMounted(() => {
   width: auto !important; /* 输入框宽度自适应 */
 
 
-}
-
-.demo-pagination-block  {
-  margin-top: 30px;
 }
 
 .demo-pagination-block  {

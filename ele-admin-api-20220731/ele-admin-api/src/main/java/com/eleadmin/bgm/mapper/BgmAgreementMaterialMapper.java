@@ -41,6 +41,6 @@ public interface BgmAgreementMaterialMapper extends BaseMapper<BgmAgreementMater
     /**
      * 查询全部所有编号为agreementNumber的数据
      */
-     boolean removeAll(String agreementNumber);
+    boolean removeAll(String agreementNumber);
 
 }

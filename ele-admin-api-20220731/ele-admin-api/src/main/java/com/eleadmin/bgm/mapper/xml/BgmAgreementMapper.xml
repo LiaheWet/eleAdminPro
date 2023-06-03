@@ -17,7 +17,7 @@
                 AND a.agreement_vendor_id = #{param.agreementVendorId}
             </if>
             <if test="param.agreementVendorName != null">
-                AND a.agreement_vendor_name = #{param.agreementVendorName}
+                AND a.agreement_vendor_name LIKE CONCAT('%', #{param.agreementVendorName}, '%')
             </if>
             <if test="param.agreementMethod != null">
                 AND a.agreement_method LIKE CONCAT('%', #{param.agreementMethod}, '%')
@@ -32,7 +32,7 @@
                 AND a.agreement_buy_time LIKE CONCAT('%', #{param.agreementBuyTime}, '%')
             </if>
             <if test="param.agreementPurchaser != null">
-                AND a.agreement_purchaser = #{param.agreementPurchaser}
+                AND a.agreement_purchaser =  LIKE CONCAT('%', #{param.agreementPurchaser}, '%')
             </if>
             <if test="param.agreementAddress != null">
                 AND a.agreement_address LIKE CONCAT('%', #{param.agreementAddress}, '%')
@@ -91,8 +91,10 @@
             <id column="am_id" property="amId"/>
             <result column="am_number" property="amNumber"/>
             <result column="create_time" property="createTime"/>
+            <result column="sm_id" property="smId"/>
             <result column="supply_name" property="supplyName"/>
             <result column="material_name" property="materialName"/>
+            <result column="specs" property="specs"/>
             <result column="measurement" property="measurement"/>
             <result column="number" property="number"/>
             <!--<result column="price" property="price"/>-->
@@ -107,11 +109,11 @@
     <select id="pageList" resultMap="AgreementResultMap">
         SELECT a.*, m.*
         FROM bgm_agreement a
-                 LEFT JOIN bgm_agreement_material m ON a.agreement_number = m.am_number
+        LEFT JOIN bgm_agreement_material m ON a.agreement_number = m.am_number
         <where>
-        <if test="param.agreementId != null">
-            AND a.agreement_id = #{param.agreementId}
-        </if>
+            <if test="param.agreementId != null">
+                AND a.agreement_id = #{param.agreementId}
+            </if>
         </where>
     </select>
 

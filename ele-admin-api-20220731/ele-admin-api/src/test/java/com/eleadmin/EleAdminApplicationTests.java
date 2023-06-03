@@ -8,11 +8,8 @@ import com.eleadmin.bgm.entity.*;
 import com.eleadmin.bgm.mapper.BgmAgreementMapper;
 import com.eleadmin.bgm.mapper.BgmMaterialTypeMapper;
 import com.eleadmin.bgm.mapper.BgmSupplyMaterialMapper;
-import com.eleadmin.bgm.param.BgmAgreementParam;
-import com.eleadmin.bgm.param.BgmSupplyMaterialParam;
-import com.eleadmin.bgm.param.BgmVendorParam;
+import com.eleadmin.bgm.param.*;
 import com.eleadmin.bgm.service.*;
-import com.eleadmin.bgm.service.impl.BgmAgreementServiceImpl;
 import com.eleadmin.bgm.service.impl.BgmMaterialTypeServiceImpl;
 import com.eleadmin.bgm.service.impl.BgmSupplyMaterialServiceImpl;
 import com.eleadmin.common.core.web.PageParam;
@@ -27,6 +24,7 @@ import javax.xml.crypto.Data;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -35,18 +33,25 @@ import java.util.List;
 public class EleAdminApplicationTests {
 
     private BgmMeasurementService bgmMeasurementService;
-    private BgmMaterialTypeService bgmMaterialTypeService;
     private BgmMaterialTypeServiceImpl bgmMaterialTypeServiceImpl;
     private BgmSupplyMaterialServiceImpl bgmSupplyMaterialService;
 
     private BgmAgreementService bgmAgreementService;
+
+
+
     private BgmAgreementMaterialService bgmAgreementMaterialService;
+    private BgmReceiveManagementService bgmReceiveManagementService;
+
 
     @Autowired
     public void setBgmAgreementMaterialService(BgmAgreementMaterialService bgmAgreementMaterialService) {
         this.bgmAgreementMaterialService = bgmAgreementMaterialService;
     }
-
+    @Autowired
+    public void setBgmReceiveManagementService(BgmReceiveManagementService bgmReceiveManagementService) {
+        this.bgmReceiveManagementService = bgmReceiveManagementService;
+    }
     @Autowired
     public void setBgmMaterialTypeServiceImpl(BgmMaterialTypeServiceImpl bgmMaterialTypeServiceImpl) {
         this.bgmMaterialTypeServiceImpl = bgmMaterialTypeServiceImpl;
@@ -69,20 +74,12 @@ public class EleAdminApplicationTests {
         this.bgmSupplyMaterialService = bgmSupplyMaterialService;
     }
 
-    @Autowired
-    public void setBgmMaterialTypeService(BgmMaterialTypeServiceImpl bgmMaterialTypeService) {
-        this.bgmMaterialTypeService = bgmMaterialTypeService;
-    }
 
     @Autowired
     public void setBgmMeasurementService(BgmMeasurementService bgmMeasurementService) {
         this.bgmMeasurementService = bgmMeasurementService;
     }
 
-    @Autowired
-    public void setBgmMaterialTypeService(BgmMaterialTypeService bgmMaterialTypeService) {
-        this.bgmMaterialTypeService = bgmMaterialTypeService;
-    }
 
     @Test
     public void contextLoads() {
@@ -112,12 +109,26 @@ public class EleAdminApplicationTests {
     }
     @Test
     void timeTest() throws ParseException {
-        BgmAgreementParam param=new BgmAgreementParam();
+        BgmReceiveManagementParam param=new BgmReceiveManagementParam();
         List<Integer>list=new ArrayList<>();
-        //list.add(1);
+        list.add(1);
         list.add(3);
-        list.add(4);
-        param.setAgreementStatusList(list);
-        System.out.println(bgmAgreementService.pageRel(param).getList());
+        //param.setManagementStatusList(list);
+        String dateStr = "2023-05-23 00:47:05";
+        String dateStr2 = "2023-05-24 00:47:05";
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date = sdf.parse(dateStr);
+        Date date2 = sdf.parse(dateStr2);
+        param.setTime1(date);
+        param.setTime2(date2);
+        System.out.println(bgmReceiveManagementService.pageRel(param).getList());
+    }
+    @Test
+    void bgmAgreementMaterialTest(){
+        String str = "SL230530002";
+        String lastThree = String.format("%03d", Integer.parseInt(str.substring(str.length() - 3))); // 获取并格式化后3位
+        int result = Integer.parseInt(lastThree) + 134; // 进行加9操作
+        System.out.println(lastThree);
+        System.out.println(String.format("%03d", result)); // 输出结果并格式化为三位数
     }
 }

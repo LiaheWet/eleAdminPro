@@ -34,7 +34,7 @@ public interface BgmAgreementMaterialService extends IService<BgmAgreementMateri
     /**
      * 根据id查询
      *
-     * @param amId 
+     * @param amId
      * @return BgmAgreementMaterial
      */
     BgmAgreementMaterial getByIdRel(Integer amId);

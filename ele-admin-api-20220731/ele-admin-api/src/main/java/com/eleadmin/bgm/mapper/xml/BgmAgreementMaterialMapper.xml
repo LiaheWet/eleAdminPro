@@ -13,6 +13,9 @@
             <if test="param.amNumber != null">
                 AND a.am_number LIKE CONCAT('%', #{param.amNumber}, '%')
             </if>
+            <if test="param.smId != null">
+                AND a.sm_id = #{param.smId}
+            </if>
             <if test="param.createTimeStart != null">
                 AND a.create_time &gt;= #{param.createTimeStart}
             </if>

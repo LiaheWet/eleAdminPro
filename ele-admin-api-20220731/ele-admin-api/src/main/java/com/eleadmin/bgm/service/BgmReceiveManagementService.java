@@ -11,7 +11,7 @@ import java.util.List;
  * 收料管理表Service
  *
  * @author EleAdmin
- * @since 2023-05-24 21:13:24
+ * @since 2023-05-26 09:37:03
  */
 public interface BgmReceiveManagementService extends IService<BgmReceiveManagement> {
 
@@ -21,7 +21,7 @@ public interface BgmReceiveManagementService extends IService<BgmReceiveManageme
      * @param param 查询参数
      * @return PageResult<BgmReceiveManagement>
      */
-    PageResult<BgmReceiveManagement> pageRel(BgmReceiveManagementParam param);
+    PageResult<BgmReceiveManagementParam> pageRel(BgmReceiveManagementParam param);
 
     /**
      * 关联查询全部
@@ -39,4 +39,5 @@ public interface BgmReceiveManagementService extends IService<BgmReceiveManageme
      */
     BgmReceiveManagement getByIdRel(Integer id);
 
+    String getNewManagementNumber();
 }

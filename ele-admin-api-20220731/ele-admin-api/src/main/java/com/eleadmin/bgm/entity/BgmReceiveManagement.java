@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.time.LocalDateTime;
-import com.baomidou.mybatisplus.annotation.TableField;
 import java.io.Serializable;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -15,7 +14,7 @@ import lombok.EqualsAndHashCode;
  * 收料管理表
  *
  * @author EleAdmin
- * @since 2023-05-24 21:13:23
+ * @since 2023-05-26 09:37:03
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -39,53 +38,50 @@ public class BgmReceiveManagement implements Serializable {
     @ApiModelProperty(value = "供应材料id")
     private Integer smId;
 
+    @ApiModelProperty(value = "收料方式")
+    private String receiveMethod;
+
     @ApiModelProperty(value = "过毛时间")
-    @TableField("fleeceTime")
-    private LocalDateTime fleecetime;
+    private String fleeceTime;
 
     @ApiModelProperty(value = "实收重量")
-    @TableField("collectedWeight")
-    private BigDecimal collectedweight;
+    private BigDecimal collectedWeight;
 
     @ApiModelProperty(value = "入库重量")
-    @TableField("warehousingWeight")
-    private BigDecimal warehousingweight;
+    private BigDecimal warehousingWeight;
 
     @ApiModelProperty(value = "实收数量")
-    @TableField("collectedNumber")
-    private String collectednumber;
+    private String collectedNumber;
 
     @ApiModelProperty(value = "累计扣杂")
-    @TableField("claspWeight")
-    private BigDecimal claspweight;
+    private BigDecimal claspWeight;
 
     @ApiModelProperty(value = "储料仓")
-    @TableField("storageBin")
-    private String storagebin;
+    private String storageBin;
 
     @ApiModelProperty(value = "过皮时间")
-    @TableField("peelingTime")
-    private LocalDateTime peelingtime;
+    private String peelingTime;
 
     @ApiModelProperty(value = "毛重")
-    @TableField("grossWeight")
-    private BigDecimal grossweight;
+    private BigDecimal grossWeight;
 
     @ApiModelProperty(value = "皮重")
-    @TableField("tareWeight")
-    private BigDecimal tareweight;
+    private BigDecimal tareWeight;
 
     @ApiModelProperty(value = "净重")
-    @TableField("netWeight")
-    private BigDecimal netweight;
+    private BigDecimal netWeight;
+
+    @ApiModelProperty(value = "明扣重量")
+    private BigDecimal buckleWeight;
 
     @ApiModelProperty(value = "运输车辆")
-    @TableField("transportVehicle")
-    private String transportvehicle;
+    private String transportVehicle;
+
+    @ApiModelProperty(value = "司机名字")
+    private String driverName;
 
     @ApiModelProperty(value = "供货数量")
-    @TableField("supplyNumber")
-    private BigDecimal supplynumber;
+    private BigDecimal supplyNumber;
 
     @ApiModelProperty(value = "过毛人员")
     private String overHairedPersonnel;

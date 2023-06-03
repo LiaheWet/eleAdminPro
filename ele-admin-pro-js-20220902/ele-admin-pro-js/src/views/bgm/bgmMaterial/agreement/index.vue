@@ -10,13 +10,15 @@
           </el-icon>
           <h8 class="page-title">采购协议</h8>
           <el-divider direction="vertical"/>
-          <el-button class="add-button" style="color: #8eb97e" @click="openDialog">新增</el-button>
-          <el-button class="modify-button" style="color: #00a3ff" @click="openDialogEdit">修改</el-button>
-          <el-button class="delete-button" style="color: red" @click="deleteAgreement">删除</el-button>
-
+          <el-button  color="#7dd733"  plain @click="openDialog"><el-icon><FirstAidKit /></el-icon>新增</el-button>
+          <el-button :disabled="isStatus1()" color="#00a3ff" plain @click="openDialogEdit"><el-icon><EditPen /></el-icon>修改</el-button>
+          <el-button :disabled="!isStatus0()" color="red" plain @click="deleteAgreement"><el-icon><Delete /></el-icon>删除</el-button>
           <el-divider direction="vertical"/>
-          <el-button class="add-button" style="color: #8eb97e" @click="">启用</el-button>
-          <el-button class="modify-button" style="color: #00a3ff" @click="test">关注</el-button>
+          <el-button v-if="isStatus2()" color="red" plain @click="updateStatus3"><el-icon><ZoomIn /></el-icon>停用</el-button>
+          <el-button v-if="isStatus3()" color="#7dd733" plain @click="updateStatus2"><el-icon><ZoomIn /></el-icon>启用</el-button>
+          <el-divider v-if="isStatus2()||isStatus3()" direction="vertical"/>
+          <el-button color="#00a3ff" plain @click="SeeDetails"><el-icon><ZoomIn /></el-icon>查看详情</el-button>
+          <el-button :disabled="!isStatus1()" color="#00a3ff" plain  @click="audit"><el-icon><Edit /></el-icon>审核</el-button>
         </div>
         <!--    查询部分-->
         <div style="background-color: #edeef0;">
@@ -108,6 +110,7 @@
                       highlight-current-row
                       size="small"
                       stripe
+                      style="height: 1000px;"
                       @current-change="CurrentChange">
               <el-table-column type="index" width="30px"></el-table-column>
               <el-table-column label="协议编号" prop="agreementNumber" width="90px"></el-table-column>
@@ -131,9 +134,7 @@
               <el-table-column label="联系方式" prop="agreementPhone" width="90px"></el-table-column>
               <el-table-column label="备注" prop="agreementRemark" width="90px"></el-table-column>
             </el-table>
-
           </el-main>
-
           <!--侧边数据-->
           <el-aside width="370px">
             <el-table :data="tableData1" :span-method="mergeCreateTime"
@@ -200,6 +201,7 @@
     <agreement-edit :formData="formData" :purchasers="purchasers"
                     :show-dialog="showDialog"
                     :vendors="vendors"
+                    :title="title"
                     @onClose="closeDialog"/>
 
   </div>
@@ -208,7 +210,7 @@
 </template>
 
 <script setup>
-import {createVNode, onMounted, reactive, ref} from "vue";
+import {computed, createVNode, onMounted, reactive, ref} from "vue";
 import {ElMessage} from "element-plus";
 import {ExclamationCircleOutlined} from "@ant-design/icons-vue";
 import {messageLoading} from "ele-admin-pro";
@@ -216,13 +218,12 @@ import {message, Modal} from "ant-design-vue/es";
 import {
   pageBgmAgreement,
   removeBgmAgreementPro,
-  selectBgmAgreementPro,
+  selectBgmAgreementPro, updateBgmAgreement,
 } from "@/api/bgm/bgmMaterial/agreement";
-import AgreementEdit from "@/views/bgm/bgmMaterial/agreement/components/agreement-edit.vue";
 import {pageBgmVendor} from "@/api/bgm/bgmMaterial/vendor";
 import {pageBgmSupplyMaterial} from "@/api/bgm/bgmMaterial/supply";
 import {pageBgmPurchaser} from "@/api/bgm/bgmMaterial/purchaser";
-
+import AgreementEdit from "@/views/bgm/bgmMaterial/agreement/components/agreement-edit.vue";
 //-------供应商--------
 const tableData = ref([]);
 const total = ref(0);
@@ -234,6 +235,7 @@ const formData = ref({
   agreementNumber: '',
   agreementCreateTime: '',
 });//表单
+const title=ref('');
 const currentRow = ref(null);//表格选择行
 //搜索栏属性
 const selectFormData = reactive({
@@ -298,7 +300,6 @@ const select = async () => {
   }
   console.log("按钮", param.agreementStatusList)
   const res = await pageBgmAgreement(param);
-
   console.log('成功获取到table数据：', res);
   tableData.value = res.list;
   total.value = res.count;
@@ -433,7 +434,7 @@ const getStatus=(status)=>{
     default:
       return '';
   }
-}
+}//选择状态表现方式（根据状态值）
 //------对话框（对表单数据传递）----
 const closeDialog = () => {
   formData.value = {};
@@ -441,6 +442,7 @@ const closeDialog = () => {
   getTableData();
 };//关闭对话框
 const openDialog = () => {
+  title.value="新增";
   showDialog.value = true;
   formData.value.agreementNumber = getSerialNumber();
   formData.value.agreementCreateTime = getCurrentTime();
@@ -451,10 +453,34 @@ const openDialogEdit = () => {
     ElMessage.warning('请先选择要修改的行！');
     return;
   }
+  title.value="修改";
   formData.value = currentRow.value;
   //console.log("formData",JSON.stringify(formData.value));
   showDialog.value = true;
 }//打开对话框并传值（表单数据）
+const SeeDetails = () => {
+  // 如果没有选中行，则提示用户先选择一行
+  if (!currentRow.value) {
+    ElMessage.warning('请先选择要查看的行！');
+    return;
+  }
+  title.value="查看详情";
+  formData.value = currentRow.value;
+  //console.log("formData",JSON.stringify(formData.value));
+  showDialog.value = true;
+};//查看详情按钮
+const audit = () => {
+  // 如果没有选中行，则提示用户先选择一行
+  if (!currentRow.value) {
+    ElMessage.warning('请先选择要审核的行！');
+    return;
+  }
+  title.value="审核";
+  formData.value = currentRow.value;
+  //console.log("formData",JSON.stringify(formData.value));
+  showDialog.value = true;
+
+};//审核按钮
 const deleteAgreement = () => {
   if (!currentRow.value) {
     ElMessage.warning('请先选择要删除的行！');
@@ -480,8 +506,73 @@ const deleteAgreement = () => {
     }
   });
 }//删除协议及关联数据
+const updateStatus3 = () => {
+ /* console.log("cc",currentRow.value.agreementStatus);
+  currentRow.value.agreementStatus=3;
+  console.log("cc",currentRow.value.agreementStatus);*/
+  currentRow.value.agreementStatus=3;
+  const hide = messageLoading('提交中...', 0);
+  updateBgmAgreement(currentRow.value)
+    .then((msg) => {
+      hide();
+      message.success(msg);
+      getTableData();
+    })
+    .catch((e) => {
+      hide();
+      message.error(e.message);
+    });
+}//停用按钮，状态改为停用（3）
+const updateStatus2 = () => {
+  currentRow.value.agreementStatus=2;
+  const hide = messageLoading('提交中...', 0);
+  updateBgmAgreement(currentRow.value)
+    .then((msg) => {
+      hide();
+      message.success(msg);
+      getTableData();
+    })
+    .catch((e) => {
+      hide();
+      message.error(e.message);
+    });
+}//启用按钮，状态改为执行中（2）
 
-
+const isStatus0= () => {
+  if(currentRow&&currentRow.value){
+    if (currentRow.value.agreementStatus==0){
+      return true
+    }
+  }
+}//判断为0状态
+const isStatus1= () => {
+  if(currentRow&&currentRow.value){
+    if (currentRow.value.agreementStatus==1){
+      return true
+    }
+  }
+}//判断为1状态
+const isStatus2= () => {
+  if(currentRow&&currentRow.value){
+    if (currentRow.value.agreementStatus==2){
+      return true
+    }
+  }
+}//判断为2状态
+const isStatus3= () => {
+  if(currentRow&&currentRow.value){
+    if (currentRow.value.agreementStatus==3){
+      return true
+    }
+  }
+}//判断为3状态
+const isStatus4= () => {
+  if(currentRow&&currentRow.value){
+    if (currentRow.value.agreementStatus==4){
+      return true
+    }
+  }
+}//判断为4状态
 onMounted(() => {
   //获取表格数据
   getTableData();
@@ -503,7 +594,6 @@ onMounted(() => {
 .el-main {
   padding-left: 0px;
   padding-top: 0px;
-  height: 600px;
   padding-right: 2px;
 }
 
@@ -580,9 +670,25 @@ onMounted(() => {
   color: #fff;
 }
 
-
+.disabled-button {
+  margin-left: 2px;
+  margin-right: 2px;
+  border: 1px solid #dcdfe6;
+  border-radius: 4px;
+  font-size: 15px;
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+.add-button, .modify-button, .delete-button, .adm-button {
+  margin-left: 2px;
+  margin-right: 2px;
+  border: 1px solid #dcdfe6;
+  border-radius: 4px;
+  font-size: 15px;
+}
 .default {
   background-color: #fff;
   color: #000;
+  width: 60px;
 }
 </style>

@@ -21,7 +21,7 @@ import java.util.List;
  * 收料管理表控制器
  *
  * @author EleAdmin
- * @since 2023-05-24 21:13:24
+ * @since 2023-05-26 09:37:03
  */
 @Api(tags = "收料管理表管理")
 @RestController
@@ -34,12 +34,12 @@ public class BgmReceiveManagementController extends BaseController {
     @OperationLog
     @ApiOperation("分页查询收料管理表")
     @GetMapping("/page")
-    public ApiResult<PageResult<BgmReceiveManagement>> page(BgmReceiveManagementParam param) {
-        PageParam<BgmReceiveManagement, BgmReceiveManagementParam> page = new PageParam<>(param);
+    public ApiResult<PageResult<BgmReceiveManagementParam>> page(BgmReceiveManagementParam param) {
+       // PageParam<BgmReceiveManagement, BgmReceiveManagementParam> page = new PageParam<>(param);
         //page.setDefaultOrder("create_time desc");
-        return success(bgmReceiveManagementService.page(page, page.getWrapper()));
+        // return success(bgmReceiveManagementService.page(page, page.getWrapper()));
         // 使用关联查询
-        //return success(bgmReceiveManagementService.pageRel(param));
+        return success(bgmReceiveManagementService.pageRel(param));//关联了其他表
     }
 
     @PreAuthorize("hasAuthority('bgm:bgmReceiveManagement:list')")
@@ -69,6 +69,9 @@ public class BgmReceiveManagementController extends BaseController {
     @ApiOperation("添加收料管理表")
     @PostMapping()
     public ApiResult<?> save(@RequestBody BgmReceiveManagement bgmReceiveManagement) {
+       if( bgmReceiveManagement.getManagementNumber()==null){
+           bgmReceiveManagement.setManagementNumber(bgmReceiveManagementService.getNewManagementNumber());
+       }
         if (bgmReceiveManagementService.save(bgmReceiveManagement)) {
             return success("添加成功");
         }

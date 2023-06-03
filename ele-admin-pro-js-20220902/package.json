@@ -1,5 +1,9 @@
 {
   "dependencies": {
     "@element-plus/icons-vue": "^2.1.0"
+  },
+  "devDependencies": {
+    "file-saver": "^2.0.5",
+    "xlsx": "^0.18.5"
   }
 }
