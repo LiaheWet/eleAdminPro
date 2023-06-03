@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eleadmin.bgm.mapper.BgmVendorContactMapper">
+
+    <!-- 关联查询sql -->
+    <sql id="selectSql">
+        SELECT a.*
+        FROM bgm_vendor_contact a
+        <where>
+            <if test="param.id != null">
+                AND a.id = #{param.id}
+            </if>
+            <if test="param.vendorId != null">
+                AND a.vendor_id = #{param.vendorId}
+            </if>
+            <if test="param.contactName != null">
+                AND a.contact_name LIKE CONCAT('%', #{param.contactName}, '%')
+            </if>
+            <if test="param.contactPost != null">
+                AND a.contact_post LIKE CONCAT('%', #{param.contactPost}, '%')
+            </if>
+            <if test="param.contactPhone != null">
+                AND a.contact_phone LIKE CONCAT('%', #{param.contactPhone}, '%')
+            </if>
+        </where>
+    </sql>
+
+    <!-- 分页查询 -->
+    <select id="selectPageRel" resultType="com.eleadmin.bgm.entity.BgmVendorContact">
+        <include refid="selectSql"></include>
+    </select>
+
+    <!-- 查询全部 -->
+    <select id="selectListRel" resultType="com.eleadmin.bgm.entity.BgmVendorContact">
+        <include refid="selectSql"></include>
+    </select>
+
+    <!--    根据vendorId查找供应商联系人-->
+    <sql id="selectByVendorId">
+        SELECT *
+        FROM bgm_vendor_contact
+        WHERE vendor_id = #{vendorId}
+    </sql>
+
+    <select id="selectByVendorId" resultType="com.eleadmin.bgm.entity.BgmVendorContact">
+        <include refid="selectByVendorId" />
+    </select>
+
+</mapper>

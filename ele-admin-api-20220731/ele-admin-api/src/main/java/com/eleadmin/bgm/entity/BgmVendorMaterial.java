@@ -9,29 +9,24 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * 联系人信息
+ * 供应商供应材料
  *
  * @author EleAdmin
- * @since 2023-06-03 16:15:33
+ * @since 2023-06-03 18:58:27
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-@ApiModel(value = "BgmVendorContact对象", description = "联系人信息")
-public class BgmVendorContact implements Serializable {
+@ApiModel(value = "BgmVendorMaterial对象", description = "供应商供应材料")
+public class BgmVendorMaterial implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
+    @ApiModelProperty(value = "供应商id")
     private Integer vendorId;
 
-    @ApiModelProperty(value = "联系人名字")
-    private String contactName;
-
-    @ApiModelProperty(value = "联系人职务")
-    private String contactPost;
-
-    @ApiModelProperty(value = "联系人电画")
-    private String contactPhone;
+    @ApiModelProperty(value = "供应原材料id")
+    private Integer supplyMaterialId;
 
 }

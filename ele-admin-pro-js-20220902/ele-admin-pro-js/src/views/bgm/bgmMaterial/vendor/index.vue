@@ -2,9 +2,9 @@
 import {computed, ref, onMounted, reactive,} from 'vue';
 import { message } from "ant-design-vue/es";
 import {
-  findAllVendorService, findVendorAccount, findVendorContact,findVendorMaterial,findMaterial,removeVendor,
-  removeVendorAccountList,removeVendorContactList,removeVendorMaterialList,
-  saveOrUpdateAccount, saveOrUpdateContact,saveOrUpdateVendor,saveVendorMaterial
+  findAllVendorService, findVendorAccount, findVendorContact, findVendorMaterial, findMaterial, removeVendor,
+  removeVendorAccountList, removeVendorContactList, removeVendorMaterialList,
+  saveOrUpdateAccount, saveOrUpdateContact, saveOrUpdateVendor, saveVendorMaterial
 } from '@/api/bgm/bgmMaterial/vendor';
 
 
@@ -19,7 +19,7 @@ export default {
 
     onMounted(() => {
       findAllVendor();
-      findMaterialList();
+       findMaterialList();
     });
 
     // 弹出框数据
@@ -31,7 +31,7 @@ export default {
         // {prop: 'vendorId',label: '供应商ID',type: 'input',visible: false},
         { prop: 'accountName', label: '账户名称', type: 'input' },
         { prop: 'accountNumber', label: '账号', type: 'input' },
-        { prop: 'bank', label: '开户银行', type: 'input' },
+        { prop: 'accountBank', label: '开户银行', type: 'input' },
       ],
       //银行账户列表
       accountList:[],
@@ -41,7 +41,7 @@ export default {
       contactTableColumns : [
         // {prop: 'vendorId',label: '供应商ID',type: 'input',visible: false},
         { prop: 'contactName', label: '联系人姓名', type: 'input' },
-        { prop: 'contactJob', label: '职务', type: 'input' },
+        { prop: 'contactPost', label: '职务', type: 'input' },
         { prop: 'contactPhone', label: '电话', type: 'input' },
       ],
       //联系人列表
@@ -67,10 +67,12 @@ export default {
 
     //分页查询
     function findAllVendor (currentPage , pageSize)  {
+
       findAllVendorService(currentPage, pageSize)
         .then((data) => {
           vendorList.value = data.list;
           totalRecords.value = data.count;
+          console.log("shua",vendorList.value);
         })
         .catch(error => {
           message.error('分页查询异常')
@@ -81,7 +83,7 @@ export default {
 
     // 供应商标签过滤
     const filterTag = (value, row) => {
-      return row.status === value;
+      return row.vendorStatus === value;
     };
 
     //原材料标签过滤
@@ -115,7 +117,7 @@ export default {
     //分页和搜索同时生效
     const filteredTableData = computed(() => {
       const filterList= vendorList.value?.filter((data) =>
-        !search.value || data.companyName.includes(search.value)||data.purchaser.includes(search.value)
+        !search.value || data.vendorName.includes(search.value)||data.buyer.includes(search.value)
       );
       totalRecords.value=filterList.length;
       return filterList.slice(pageSize.value * (currentPage.value - 1), pageSize.value * currentPage.value);
@@ -133,7 +135,7 @@ export default {
 
     //启用供应商
     function Enable(currentRow){
-      currentRow.status=1
+      currentRow.vendorStatus=1
       saveOrUpdateVendor(currentRow).then(  () => {
         message.success("已启用");
         // findAllVendor()
@@ -147,7 +149,7 @@ export default {
 
     //停用供应商
     function Deactivate(currentRow){
-      currentRow.status=0
+      currentRow.vendorStatus=0
       saveOrUpdateVendor(currentRow).then(  () => {
         message.success("已停用");
       })
@@ -195,6 +197,7 @@ export default {
         findVendorAccount(ruleForm.dialogData.vendorId).then(
           (data) => {
             ruleForm.accountList=data
+            console.log(' ruleForm.accountList', ruleForm.accountList)
           })
           .catch(error => {
             message.error('查找银行账户异常')
@@ -213,7 +216,7 @@ export default {
         findVendorMaterial(ruleForm.dialogData.vendorId).then(
           (data) => {
             ruleForm.vendorMaterial=data
-
+            console.log("vendorMaterial",ruleForm.vendorMaterial)
           })
           .catch(error => {
             message.error('打开弹出框时查找该供应商的原材料异常')
@@ -226,32 +229,32 @@ export default {
 
     //表单校验
     const rules = reactive({
-      companyName: [
+      vendorName: [
         { required: true, message: '请输入供应商名称', trigger: 'blur' },
         // { min: 1, message: '名称不为空', trigger: 'blur' },
       ],
-      legalPerson: [
+      vendorRepresent: [
         { required: true, message: '请输入法人代表姓名', trigger: 'blur' },
         { min: 2, max: 5, message: '名字长度在2-5', trigger: 'blur' },
       ],
-      phone: [
+      vendorPhone: [
         { required: true, message: '请输入联系电话', trigger: 'blur' },
         { pattern: /^'1'[3-9]\d{9}$/, message: '格式错误', trigger: 'blur' },
       ],
-      address: [
+      vendorAddress: [
         { required: true, message: '请输入地址', trigger: 'blur' },
         { min: 1,  message: '地址不能为空', trigger: 'blur' },
       ],
-      email:[
+      vendorEmail:[
         {required: true , message:'请输入qq邮箱',trigger:'blur'},
         {message: '格式错误!请输入9位或10位数字@qq.com' , pattern: /^[1-9]\d{8,9}@qq\.com$/,trigger: 'blur'}
         // {validator : validateEmail ,trigger:'blur'}
       ],
-      faxNumber:[
+      vendorFax:[
         {required: true , message:'请输入传真号',trigger:'blur'},
         {message: '格式错误！例：+86或010-12345678' , pattern: /^('+'86\s)?\d{3,4}-\d{7,8}$/,trigger: 'blur'}
       ],
-      postcode:[
+      vendorPostal:[
         {required: false ,trigger:'blur'},
         {message: '格式错误！请输入六位数' , pattern: /^\d{6}$/,trigger: 'blur'}
       ],
@@ -274,7 +277,10 @@ export default {
       if (index >= 0) {
         ruleForm.accountList.splice(index, 1);
       }
-      ruleForm.accountDeleteList.push(row.id)
+      if(typeof (row.id)!=='undefined'){
+        ruleForm.accountDeleteList.push(row.id)
+      }
+
 
 
     };
@@ -290,7 +296,10 @@ export default {
       if (index >= 0) {
         ruleForm.contactList.splice(index, 1);
       }
-      ruleForm.contactDeleteList.push(row.id)
+      if(typeof (row.id)!=='undefined'){
+        ruleForm.contactDeleteList.push(row.id)
+      }
+
 
 
     };
@@ -352,8 +361,8 @@ export default {
         console.log("删除的数据", ruleForm.vendorMaterialDeleteList)
         removeVendorMaterialList(ruleForm.vendorMaterialDeleteList).then((msg)=>{})
           .catch(error => {
-            message.error('联系人异常')
-            console.log('删除银行账户异常')
+            message.error('供应商原材料异常')
+            console.log('删除供应商原材料异常')
           });
       }
     }
@@ -362,6 +371,7 @@ export default {
     function findMaterialList() {
       findMaterial().then((data)=>{
         materialList.value=data;
+        console.log("materialList",materialList.value)
       })
         .catch(error => {
           console.log(materialList.value)
@@ -378,7 +388,8 @@ export default {
 
     function handleSelectionChange(selection) {
       // 获取选中的行的原材料名称，并保存到selectedIds数组中
-      selectedIds.value = selection.map(record => record.supplyMaterialName);
+      selectedIds.value = selection.map(record => record.supplyMaterialId);
+
       console.log('###选中selectedIds.value',selectedIds.value)
       console.log('selectedIds.length',selectedIds.value.length)
 
@@ -392,17 +403,14 @@ export default {
         alert('未选择数据')
       else{
         console.log('选择选择原材料',selectedIds)
-
-        const selectedRows = materialList.value.filter(item => selectedIds.value.includes(item.supplyMaterialName))
+        const selectedRows = materialList.value.filter(item => selectedIds.value.includes(item.supplyMaterialId))
 
         // 在每个选中的行数据中增加 vendorId的属性
         for (let i = 0; i < selectedRows.length; i++) {
           selectedRows[i].vendorId = ruleForm.dialogData.vendorId
-          selectedRows[i].smName=selectedRows[i].supplyMaterialName
-          selectedRows[i].smStatus=selectedRows[i].materialStatus
-
+          selectedRows[i].supplyMaterialId=selectedRows[i].supplyMaterialId
         }
-        // console.log(selectedRows)
+        console.log("selectedRows",selectedRows)
         saveVendorMaterial(selectedRows).then(
           (msg)=>{
             message.success(msg)
@@ -448,7 +456,7 @@ export default {
 
       const index = ruleForm.vendorMaterial.indexOf(row);
       if (index >= 0) {
-        ruleForm.contactList.splice(index, 1);
+        ruleForm.vendorMaterial.splice(index, 1);
       }
       ruleForm.vendorMaterialDeleteList.push(row.id)
 
@@ -576,8 +584,8 @@ export default {
       <el-button type="primary" plain icon="Plus" size="small" @click="addVendor">新建</el-button>
       <el-button type="danger" plain icon="Delete" size="small" :disabled="isDisabled" @click="handleDelete(currentRow)">删除</el-button>
       <el-button type="warning" plain icon="Edit"  size="small" :disabled="isDisabled" @click="handleEdit(currentRow)">编辑</el-button>
-      <el-button type="success" plain icon="Edit"  size="small" v-show="currentRow && currentRow.status ===0 " @click="Enable(currentRow)">启用</el-button>
-      <el-button type="danger" plain icon="Edit" size="small" v-show="currentRow && currentRow.status ===1 " @click="Deactivate(currentRow)">停用</el-button>
+      <el-button type="success" plain icon="Edit"  size="small" v-show="currentRow && currentRow.vendorStatus ===0 " @click="Enable(currentRow)">启用</el-button>
+      <el-button type="danger" plain icon="Edit" size="small" v-show="currentRow && currentRow.vendorStatus ===1 " @click="Deactivate(currentRow)">停用</el-button>
     </div>
 
 
@@ -589,13 +597,13 @@ export default {
             >
 
     <el-table-column label="序号" type="index" width="80" prop="filteredTableData.$index" header-align="center" />
-    <el-table-column label="单位名称" prop="companyName" header-align="center" />
-    <el-table-column label="联系电话" prop="phone" header-align="center" />
-    <el-table-column label="联系地址" prop="address" header-align="center" />
-    <el-table-column label="采购员" width="80px" prop="purchaser" header-align="center"/>
+    <el-table-column label="单位名称" prop="vendorName" header-align="center" />
+    <el-table-column label="联系电话" prop="vendorPhone" header-align="center" />
+    <el-table-column label="联系地址" prop="vendorAddress" header-align="center" />
+    <el-table-column label="采购员" width="80px" prop="buyer" header-align="center"/>
 
     <el-table-column
-      prop="status"
+      prop="vendorStatus"
       label="状态"
       header-align="center"
       width="70px"
@@ -608,14 +616,14 @@ export default {
     >
       <template #default="scope">
         <el-tag
-          :type="scope.row.status === 1 ? '' : 'success'"
+          :type="scope.row.vendorStatus === 1 ? '' : 'success'"
           disable-transitions
         >{{ scope.row.status ===1?'启用':'停用'}}</el-tag
         >
       </template>
     </el-table-column>
 
-    <el-table-column label="备注" prop="remarks" header-align="center"/>
+    <el-table-column label="备注" prop="remark" header-align="center"/>
 
 <!--    <el-table-column align="right">
       <template #header>
@@ -679,20 +687,20 @@ export default {
            <div>
              <el-row>
                <el-col :span="8">
-                 <el-form-item label="单位名称" prop="companyName" size="small"  >
-                   <el-input style="width: 180px"  v-model="ruleForm.dialogData.companyName"/>
+                 <el-form-item label="单位名称" prop="vendorName" size="small"  >
+                   <el-input style="width: 180px"  v-model="ruleForm.dialogData.vendorName"/>
                  </el-form-item>
                </el-col>
 
                <el-col :span="8">
-                 <el-form-item label="地址" prop="address" size="small">
-                   <el-input style="width: 180px" v-model="ruleForm.dialogData.address" />
+                 <el-form-item label="地址" prop="vendorAddress" size="small">
+                   <el-input style="width: 180px" v-model="ruleForm.dialogData.vendorAddress" />
                  </el-form-item>
                </el-col>
 
                <el-col :span="8">
-                 <el-form-item label="法人代表" prop="legalPerson" size="small">
-                   <el-input style="width: 180px" v-model="ruleForm.dialogData.legalPerson"/>
+                 <el-form-item label="法人代表" prop="vendorRepresent" size="small">
+                   <el-input style="width: 180px" v-model="ruleForm.dialogData.vendorRepresent"/>
                  </el-form-item>
                </el-col>
 
@@ -701,21 +709,21 @@ export default {
              <el-row>
 
                <el-col :span="8">
-                 <el-form-item label="联系电话" prop="phone" size="small" >
-                   <el-input style="width: 180px" v-model="ruleForm.dialogData.phone" />
+                 <el-form-item label="联系电话" prop="vendorPhone" size="small" >
+                   <el-input style="width: 180px" v-model="ruleForm.dialogData.vendorPhone" />
                  </el-form-item>
                </el-col>
 
                <el-col :span="8">
-                 <el-form-item label="电子邮箱" prop="email" size="small">
-                   <el-input style="width: 180px" v-model="ruleForm.dialogData.email" />
+                 <el-form-item label="电子邮箱" prop="vendorEmail" size="small">
+                   <el-input style="width: 180px" v-model="ruleForm.dialogData.vendorEmail" />
                  </el-form-item>
                </el-col>
 
                <el-col :span="8">
-                 <el-form-item label="传真号" prop="faxNumber" size="small">
+                 <el-form-item label="传真号" prop="vendorFax" size="small">
 
-                   <el-input style="width: 180px" v-model="ruleForm.dialogData.faxNumber" />
+                   <el-input style="width: 180px" v-model="ruleForm.dialogData.vendorFax" />
                  </el-form-item>
                </el-col >
 
@@ -724,8 +732,8 @@ export default {
              <el-row>
 
                <el-col :span="8">
-                 <el-form-item label="邮编" prop="postcode" size="small">
-                   <el-input style="width: 180px" v-model="ruleForm.dialogData.postcode" />
+                 <el-form-item label="邮编" prop="vendorPostal" size="small">
+                   <el-input style="width: 180px" v-model="ruleForm.dialogData.vendorPostal" />
                  </el-form-item>
                </el-col>
 
@@ -736,8 +744,8 @@ export default {
                </el-col>
 
                <el-col :span="8">
-                 <el-form-item label="采购员" prop="purchaser" size="small">
-                   <el-input style="width: 180px" v-model="ruleForm.dialogData.purchaser" />
+                 <el-form-item label="采购员" prop="buyer" size="small">
+                   <el-input style="width: 180px" v-model="ruleForm.dialogData.buyer" />
                  </el-form-item>
                </el-col >
 
@@ -745,8 +753,8 @@ export default {
 
              <el-row>
                <el-col :span="24">
-                 <el-form-item label="备注" prop="remarks" size="small">
-                   <el-input style="width: 710px;" v-model="ruleForm.dialogData.remarks" type="textarea" />
+                 <el-form-item label="备注" prop="remark" size="small">
+                   <el-input style="width: 710px;" v-model="ruleForm.dialogData.remark" type="textarea" />
                  </el-form-item>
                  <br>
                </el-col>
@@ -820,7 +828,7 @@ export default {
 
       <el-table :data="ruleForm.vendorMaterial" style="width: 100%" border>
             <el-table-column prop="smName" label="供应原材料" header-align="center"></el-table-column>
-            <el-table-column prop="materialName" label="平台原材料" header-align="center"></el-table-column>
+            <el-table-column prop="smTypeName" label="平台原材料" header-align="center"></el-table-column>
             <el-table-column
               prop="smStatus"
               width="80px"
@@ -870,18 +878,18 @@ export default {
       @close="closeMaterialTable"
     >
         <!-- Inner Dialog Content -->
-      <!-- 多选表格 -->
+      <!-- 多选表格 --><!--        :row-key="row => row.supplyMaterialName"-->
       <el-table ref="materialTable"
         :data="materialList"
         style="width: 100%"
-        :row-key="row => row.supplyMaterialName"
         @selection-change="handleSelectionChange"
         border
       >
         <el-table-column type="selection" width="55"></el-table-column>
-        <el-table-column prop="materialType" label="类别" header-align="center"></el-table-column>
-        <el-table-column prop="supplyMaterialName" label="供应原材料" header-align="center"></el-table-column>
-        <el-table-column prop="materialName" label="平台原材料" header-align="center"></el-table-column>
+        <el-table-column prop="supplyMaterialId" label="id" header-align="center"></el-table-column>
+        <el-table-column prop="smTypeName" label="类别" header-align="center"></el-table-column>
+        <el-table-column prop="smName" label="供应原材料" header-align="center"></el-table-column>
+        <el-table-column prop="smTypeName" label="平台原材料" header-align="center"></el-table-column>
 
       </el-table>
 

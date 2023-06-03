@@ -43,6 +43,11 @@ public class EleAdminApplicationTests {
     private BgmAgreementMaterialService bgmAgreementMaterialService;
     private BgmReceiveManagementService bgmReceiveManagementService;
 
+    private BgmVendorMaterialService bgmVendorMaterialService;
+    @Autowired
+    public void setBgmVendorMaterialService(BgmVendorMaterialService bgmVendorMaterialService) {
+        this.bgmVendorMaterialService = bgmVendorMaterialService;
+    }
 
     @Autowired
     public void setBgmAgreementMaterialService(BgmAgreementMaterialService bgmAgreementMaterialService) {
@@ -130,5 +135,11 @@ public class EleAdminApplicationTests {
         int result = Integer.parseInt(lastThree) + 134; // 进行加9操作
         System.out.println(lastThree);
         System.out.println(String.format("%03d", result)); // 输出结果并格式化为三位数
+    }
+    @Test
+    void bgmVendorMaterialServiceTest(){
+        BgmVendorMaterialParam param=new BgmVendorMaterialParam();
+        param.setVendorId(3);
+        System.out.println(bgmVendorMaterialService.listRel(param));
     }
 }

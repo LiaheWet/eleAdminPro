@@ -3,7 +3,7 @@ import {setToken} from "@/utils/token-util";
 
 // 分页查询供应商
 export async function findAllVendorService(params){
-  const res = await request.get('/bgm/bgm-vendor/page',{params});
+  const res = await request.get('/bgm/bgmVendor/page',{params});
 
   if (res.data.code === 0 && res.data.data) {
     return res.data.data;
@@ -47,7 +47,7 @@ export async function findVendorMaterial(id){
 
 // 通过id删除供应商
 export async function removeVendor(id){
-  const res = await request.delete('/bgm/bgm-vendor/'+id);
+  const res = await request.delete('/bgm/bgmVendor/'+id);
 
   if (res.data.code === 0) {
     return res.data.message;
@@ -125,7 +125,7 @@ export async function removeVendorMaterialList(data){
 
 // 保存添加或修改供应基本信息
 export async function saveOrUpdateVendor(dialogData) {
-  const res = await request.post('/bgm/bgm-vendor/',dialogData);
+  const res = await request.post('/bgm/bgmVendor/',dialogData);
   if (res.data.code === 0) {
     return res.data.message;
   }
@@ -152,7 +152,7 @@ export async function saveOrUpdateContact(contactList) {
 
 //查找所有原材料
 export async function findMaterial(){
-  const res = await request.get('/bgm/bgm-vendor-material');
+  const res = await request.get('/bgm/bgmSupplyMaterial');
 
   if (res.data.code === 0 && res.data.data) {
     return res.data.data;

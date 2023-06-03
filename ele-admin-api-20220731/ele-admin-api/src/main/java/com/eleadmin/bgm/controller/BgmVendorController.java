@@ -1,6 +1,10 @@
 package com.eleadmin.bgm.controller;
 
+import com.eleadmin.bgm.entity.BgmVendorAccount;
+import com.eleadmin.bgm.entity.BgmVendorContact;
 import com.eleadmin.bgm.param.BgmAgreementParam;
+import com.eleadmin.bgm.service.BgmVendorAccountService;
+import com.eleadmin.bgm.service.BgmVendorContactService;
 import com.eleadmin.common.core.web.BaseController;
 import com.eleadmin.bgm.service.BgmVendorService;
 import com.eleadmin.bgm.entity.BgmVendor;
@@ -30,6 +34,10 @@ import java.util.List;
 public class BgmVendorController extends BaseController {
     @Resource
     private BgmVendorService bgmVendorService;
+    @Resource
+    private BgmVendorAccountService bgmVendorAccountService;
+    @Resource
+    private BgmVendorContactService bgmVendorContactService;
     @PreAuthorize("hasAuthority('bgm:bgmVendor:list')")
     @OperationLog
     @ApiOperation("分页查询供应商")
@@ -78,10 +86,32 @@ public class BgmVendorController extends BaseController {
     @ApiOperation("添加供应商")
     @PostMapping()
     public ApiResult<?> save(@RequestBody BgmVendor bgmVendor) {
-        if (bgmVendorService.save(bgmVendor)) {
+        if (bgmVendorService.saveOrUpdate(bgmVendor)) {
             return success("添加成功");
         }
         return fail("添加失败");
+    }
+    @PreAuthorize("hasAuthority('bgm:bgmVendor:remove')")
+    @OperationLog
+    @ApiOperation("删除")
+    @DeleteMapping("/{id}")
+    public ApiResult<?> remove(@PathVariable("id") Integer id) {
+        List<BgmVendorAccount> bgmVendorAccountList = bgmVendorAccountService.listByVendorId(id);
+        for (BgmVendorAccount b:bgmVendorAccountList
+        ) {
+            bgmVendorAccountService.removeById(b.getId());
+        }
+
+        List<BgmVendorContact> bgmVendorContactList = bgmVendorContactService.listByVendorId(id);
+        for (BgmVendorContact b:bgmVendorContactList
+        ) {
+            bgmVendorContactService.removeById(b.getId());
+        }
+
+        if (bgmVendorService.removeById(id)) {
+            return success("删除成功");
+        }
+        return fail("删除失败");
     }
 
     @PreAuthorize("hasAuthority('bgm:bgmVendor:update')")
@@ -93,17 +123,6 @@ public class BgmVendorController extends BaseController {
             return success("修改成功");
         }
         return fail("修改失败");
-    }
-
-    @PreAuthorize("hasAuthority('bgm:bgmVendor:remove')")
-    @OperationLog
-    @ApiOperation("删除供应商")
-    @DeleteMapping("/{id}")
-    public ApiResult<?> remove(@PathVariable("id") Integer id) {
-        if (bgmVendorService.removeById(id)) {
-            return success("删除成功");
-        }
-        return fail("删除失败");
     }
 
     @PreAuthorize("hasAuthority('bgm:bgmVendor:save')")

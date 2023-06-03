@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eleadmin.bgm.mapper.BgmVendorMaterialMapper">
+
+    <!-- 关联查询sql -->
+    <sql id="selectSql">
+        SELECT a.*,b.*
+        FROM bgm_vendor_material a
+        LEFT JOIN bgm_supply_material b ON a.supply_material_id = b.supply_material_id
+        <where>
+            <if test="param.id != null">
+                AND a.id = #{param.id}
+            </if>
+            <if test="param.vendorId != null">
+                AND a.vendor_id = #{param.vendorId}
+            </if>
+            <if test="param.supplyMaterialId != null">
+                AND a.supply_material_id = #{param.supplyMaterialId}
+            </if>
+        </where>
+    </sql>
+
+    <!-- 分页查询 -->
+    <select id="selectPageRel" resultType="com.eleadmin.bgm.entity.BgmVendorMaterial">
+        <include refid="selectSql"></include>
+    </select>
+
+    <!-- 查询全部 -->
+    <select id="selectListRel" resultType="com.eleadmin.bgm.param.BgmVendorMaterialParam">
+        <include refid="selectSql"></include>
+    </select>
+
+</mapper>

@@ -1,28 +1,31 @@
-package com.eleadmin.bgm.entity;
+package com.eleadmin.bgm.param;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import java.io.Serializable;
+import com.eleadmin.common.core.annotation.QueryField;
+import com.eleadmin.common.core.annotation.QueryType;
+import com.eleadmin.common.core.web.BaseParam;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * 联系人信息
+ * 联系人信息查询参数
  *
  * @author EleAdmin
- * @since 2023-06-03 16:15:33
+ * @since 2023-06-03 16:15:32
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-@ApiModel(value = "BgmVendorContact对象", description = "联系人信息")
-public class BgmVendorContact implements Serializable {
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@ApiModel(value = "BgmVendorContactParam对象", description = "联系人信息查询参数")
+public class BgmVendorContactParam extends BaseParam {
     private static final long serialVersionUID = 1L;
 
-    @TableId(value = "id", type = IdType.AUTO)
+    @QueryField(type = QueryType.EQ)
     private Integer id;
 
+    @QueryField(type = QueryType.EQ)
     private Integer vendorId;
 
     @ApiModelProperty(value = "联系人名字")
