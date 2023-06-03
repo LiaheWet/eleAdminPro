@@ -1,89 +1,170 @@
 import request from "@/utils/request";
+import {setToken} from "@/utils/token-util";
 
-/**
- * 分页查询供应商
- */
-export async function selectBgmVendorPro(params) {
-  const res = await request.get('/bgm/bgmVendor/selectPro',{
-    params
-  });
-  console.log(res)
-  if (res.data.code === 0) {
+// 分页查询供应商
+export async function findAllVendorService(params){
+  const res = await request.get('/bgm/bgm-vendor/page',{params});
+
+  if (res.data.code === 0 && res.data.data) {
     return res.data.data;
   }
   return Promise.reject(new Error(res.data.message));
+
 }
-export async function pageBgmVendor(params) {
-  const res = await request.get('/bgm/bgmVendor/page',{
-    params
-  });
-  console.log(res)
-  if (res.data.code === 0) {
+
+// 通过供应商id查找银行账户
+export async function findVendorAccount(id){
+  const res = await request.get('/bgm/bgm-vendor-account/'+id);
+
+  if (res.data.code === 0 && res.data.data) {
     return res.data.data;
+  }
+  return Promise.reject(new Error(res.data.message));
+
+}
+
+// 通过供应商id查找联系人
+export async function findVendorContact(id){
+  const res = await request.get('/bgm/bgm-vendor-contact/'+id);
+
+  if (res.data.code === 0 && res.data.data) {
+    return res.data.data;
+  }
+  return Promise.reject(new Error(res.data.message));
+
+}
+
+// 通过供应商id查找原材料
+export async function findVendorMaterial(id){
+  const res = await request.get('/bgm/bgm-vendor-material/'+id);
+
+  if (res.data.code === 0 && res.data.data) {
+    return res.data.data;
+  }
+  return Promise.reject(new Error(res.data.message));
+
+}
+
+// 通过id删除供应商
+export async function removeVendor(id){
+  const res = await request.delete('/bgm/bgm-vendor/'+id);
+
+  if (res.data.code === 0) {
+    return res.data.message;
+  }
+  return Promise.reject(new Error(res.data.message));
+
+}
+
+// 通过id删除银行账户
+export async function removeVendorAccount(id){
+  const res = await request.delete('/bgm/bgm-vendor-account/'+id);
+
+  if (res.data.code === 0)  {
+    return res.data.message;
+  }
+  return Promise.reject(new Error(res.data.message));
+
+}
+
+// 批量删除银行账户
+export async function removeVendorAccountList(data){
+  const res = await request.delete('/bgm/bgm-vendor-account/batch', {data});
+  console.log("批量删除",res)
+  if (res.data.code === 0)  {
+    return res.data.message;
+  }
+  return Promise.reject(new Error(res.data.message));
+
+}
+
+// 通过id删除联系人
+export async function removeVendorContact(id){
+  const res = await request.delete('/bgm/bgm-vendor-contact/'+id);
+
+  if (res.data.code === 0 ) {
+    return res.data.message;
   }
   return Promise.reject(new Error(res.data.message));
 }
 
-/**
- * 查询供应商列表
- */
-export async function listBgmVendor(params) {
-  console.log(params);
-  const res = await request.get('/bgm/bgmVendor', {
-    params
-  });
+// 批量删除联系人
+export async function removeVendorContactList(data){
+  const res = await request.delete('/bgm/bgm-vendor-contact/batch', {data});
+  console.log("批量删除",res)
+  if (res.data.code === 0)  {
+    return res.data.message;
+  }
+  return Promise.reject(new Error(res.data.message));
+
+}
+
+
+// 通过id删除供应商原材料
+export async function removeVendorMaterial(id){
+  const res = await request.delete('/bgm/bgm-vendor-material/'+id);
+
+  if (res.data.code === 0 ) {
+    return res.data.message;
+  }
+  return Promise.reject(new Error(res.data.message));
+}
+
+// 批量删除供应商原材料
+export async function removeVendorMaterialList(data){
+  const res = await request.delete('/bgm/bgm-vendor-material/batch', {data});
+  console.log("批量删除",res)
+  if (res.data.code === 0)  {
+    return res.data.message;
+  }
+  return Promise.reject(new Error(res.data.message));
+
+}
+
+
+
+// 保存添加或修改供应基本信息
+export async function saveOrUpdateVendor(dialogData) {
+  const res = await request.post('/bgm/bgm-vendor/',dialogData);
+  if (res.data.code === 0) {
+    return res.data.message;
+  }
+  return Promise.reject(new Error(res.data.message));
+}
+
+// 保存添加或修改供应商银行账户
+export async function saveOrUpdateAccount(accountList) {
+  const res = await request.post('/bgm/bgm-vendor-account/batch',accountList);
+  if (res.data.code === 0) {
+    return res.data.message;
+  }
+  return Promise.reject(new Error(res.data.message));
+}
+
+// 保存添加或修改联系人
+export async function saveOrUpdateContact(contactList) {
+  const res = await request.post('/bgm/bgm-vendor-contact/batch', contactList);
+  if (res.data.code === 0) {
+    return res.data.message;
+  }
+  return Promise.reject(new Error(res.data.message));
+}
+
+//查找所有原材料
+export async function findMaterial(){
+  const res = await request.get('/bgm/bgm-vendor-material');
+
   if (res.data.code === 0 && res.data.data) {
     return res.data.data;
   }
   return Promise.reject(new Error(res.data.message));
 }
 
-/**
- * 添加供应商
- */
-export async function addBgmVendor(data) {
-  const res = await request.post('/bgm/bgmVendor', data);
-  if (res.data.code === 0) {
-    return res.data.message;
-  }
-
-  return Promise.reject(new Error(res.data.message));
-}
-
-/**
- * 修改供应商
- */
-export async function updateBgmVendor(data) {
-  const res = await request.put('/bgm/bgmVendor', data);
+export async function saveVendorMaterial(selectedRows) {
+  const res = await request.post('/bgm/bgm-vendor-material/batch', selectedRows);
   if (res.data.code === 0) {
     return res.data.message;
   }
   return Promise.reject(new Error(res.data.message));
 }
 
-/**
- * 删除供应商
- */
-export async function removeBgmVendor(id) {
-  console.log("id=="+id);
-  const res = await request.delete('/bgm/bgmVendor/' + id);
-  console.log(res);
-  if (res.data.code === 0) {
-    return res.data.message;
-  }
-  return Promise.reject(new Error(res.data.message));
-}
-
-
-/**
- * 批量删除供应商
- */
-export async function removeBgmVendors(data) {
-  const res = await request.delete('/bgm/bgmVendor/batch', {
-    data
-  });
-  if (res.data.code === 0) {
-    return res.data.message;
-  }
-  return Promise.reject(new Error(res.data.message));
-}
